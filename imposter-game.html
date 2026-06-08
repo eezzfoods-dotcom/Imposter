@@ -2445,6 +2445,12 @@ var TA={n:"Team A",col:"#3b82f6",bg:"rgba(59,130,246,.1)", br:"rgba(59,130,246,.
 var TB={n:"Team B",col:"#f43f5e",bg:"rgba(244,63,94,.1)",  br:"rgba(244,63,94,.35)", e:"🔴"};
 var PTS={pc:3,pe:-1,ie:4,ic:-2,ig:2,tw:2};
 
+var ERAS=[
+  {key:"classic", label:"🎞 Classics", sub:"Up to 1989", maxY:1989, minY:0},
+  {key:"retro",   label:"📼 90s & 2000s", sub:"1990 – 2009", maxY:2009, minY:1990},
+  {key:"modern",  label:"🎬 2010s & 2020s", sub:"2010 onwards", maxY:9999, minY:2010}
+];
+
 // ── STATE ────────────────────────────────────────────────
 var G={
   phase:"setup",
@@ -2458,7 +2464,7 @@ var G={
   votes:{},guesses:{},
   timerIv:null,
   newScores:{},newTS:{0:0,1:0},
-  ss:{cnt:6,names:["","","","","",""],tr:3,dbl:false,tm:false,tsec:120,pts:true,langs:["Tamil","Telugu","Hindi","Malayalam","English"],diff:"medium",cats:["Movies","Foods","Locations"]},
+  ss:{cnt:6,names:["","","","","",""],tr:3,dbl:false,tm:false,tsec:120,pts:true,langs:["Tamil","Telugu","Hindi","Malayalam","English"],diff:"medium",cats:["Movies","Foods","Locations"],eras:["classic","retro","modern"]},
   mvpVotes:{},
   nextRoundVotes:{},
   discussRound:1
@@ -2504,11 +2510,12 @@ function drawSetup(){
   var s=G.ss;
   if(!s.langs||!Array.isArray(s.langs)) G.ss.langs=["Tamil","Telugu","Hindi","Malayalam","English"];
   if(!s.cats||!Array.isArray(s.cats)) G.ss.cats=["Movies","Foods","Locations"];
+  if(!s.eras||!Array.isArray(s.eras)) G.ss.eras=["classic","retro","modern"];
   s=G.ss;
   var canDbl=s.cnt>=5, canTm=s.cnt>=4&&s.cnt%2===0;
   var filledNames=0;
   for(var i=0;i<s.cnt;i++){if(s.names[i]&&s.names[i].trim())filledNames++;}
-  var valid=(filledNames>=3)&&(!s.langs||s.langs.length>0)&&(s.cats&&s.cats.length>0);
+  var valid=(filledNames>=3)&&(!s.langs||s.langs.length>0)&&(s.cats&&s.cats.length>0)&&(s.eras&&s.eras.length>0);
 
   var html="<div class='page'><div class='card'>";
   html+=film();
@@ -2558,6 +2565,48 @@ function drawSetup(){
   }
   html+="</div>";
   if(!s.langs.length) html+="<p style='color:#e74c3c;font-size:.72rem;margin-top:8px'>⚠️ Select at least one language</p>";
+  html+="</div>";
+
+  // ── ERA selector ──
+  if(!s.eras||!Array.isArray(s.eras)) G.ss.eras=["classic","retro","modern"];
+  s=G.ss;
+  html+="<div class='sec'><p class='slbl'>MOVIE ERA <span class='snote'>(select one or more)</span></p>";
+  html+="<div style='display:flex;flex-direction:column;gap:7px;margin-top:2px'>";
+  for(var ei=0;ei<ERAS.length;ei++){
+    var era=ERAS[ei];
+    var eraOn=(s.eras||[]).indexOf(era.key)>=0;
+    // count how many movies match this era + selected languages
+    var eraCnt=0;
+    for(var ri2=0;ri2<ROUNDS.length;ri2++){
+      var rr=ROUNDS[ri2];
+      if(rr.c!=="Movie") continue;
+      var ry=parseInt(rr.y||"0");
+      if(ry>=era.minY&&ry<=era.maxY&&(s.langs.indexOf(rr.l)>=0)) eraCnt++;
+    }
+    html+="<button onclick='togEra(\""+era.key+"\")' style='"+
+      "display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;"+
+      "border-radius:12px;border:2px solid "+(eraOn?"#9C27B0":"var(--border2)")+";"+
+      "background:"+(eraOn?"linear-gradient(135deg,rgba(156,39,176,.15),rgba(233,30,99,.1))":"var(--surface)")+";"+
+      "cursor:pointer;transition:all .18s;text-align:left;font-family:DM Sans,sans-serif'>";
+    // Checkbox
+    html+="<div style='width:20px;height:20px;border-radius:5px;flex-shrink:0;"+
+      "border:2px solid "+(eraOn?"#9C27B0":"var(--border2)")+";"+
+      "background:"+(eraOn?"linear-gradient(135deg,#9C27B0,#E91E63)":"transparent")+";"+
+      "display:flex;align-items:center;justify-content:center'>"+
+      (eraOn?"<span style='color:#fff;font-size:.7rem;font-weight:700'>✓</span>":"")+"</div>";
+    // Label + sub
+    html+="<div style='flex:1;min-width:0'>";
+    html+="<div style='font-size:.88rem;font-weight:700;color:"+(eraOn?"#7B1FA2":"var(--text2)")+"'>"+era.label+"</div>";
+    html+="<div style='font-size:.68rem;color:var(--text3);margin-top:1px'>"+era.sub+"</div>";
+    html+="</div>";
+    // Count badge
+    html+="<span style='font-size:.7rem;background:"+(eraOn?"rgba(156,39,176,.15)":"rgba(0,0,0,.06)")+
+      ";color:"+(eraOn?"#7B1FA2":"var(--text3)")+
+      ";padding:3px 9px;border-radius:20px;font-weight:700;flex-shrink:0'>"+eraCnt+" films</span>";
+    html+="</button>";
+  }
+  html+="</div>";
+  if(!(s.eras&&s.eras.length)) html+="<p style='color:#e74c3c;font-size:.72rem;margin-top:8px'>⚠️ Select at least one era</p>";
   html+="</div>";
   // ── CATEGORY selector ──
   html+="<div class='sec'><p class='slbl'>CATEGORIES <span class='snote'>(select what to play)</span></p>";
@@ -3281,7 +3330,7 @@ function showResult(){
   html+="<div class='rvbox' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
   html+="<p class='rveye' style='color:"+meta.col+"'>"+meta.e+" THE ANSWER WAS</p>";
   html+="<p class='rvnm'>"+h(r.n)+"</p>";
-  html+="<p class='rvcat'>"+(r.l==="Food"?"Indian Food":r.l==="Location"?"Indian Location":r.l+" Movie")+" · "+h(r.d)+"</p>";
+  html+="<p class='rvcat'>"+(r.l==="Food"?"Indian Food":r.l==="Location"?"Indian Location":r.l+" Movie")+" · "+h(r.d)+(r.y&&r.c==="Movie"?" · "+r.y:"")+"</p>";
   if(G.cfg.pts){
     for(var x=0;x<impIdxs.length;x++){
       var ii=impIdxs[x], g=(G.guesses[ii]||"").trim();
@@ -3519,6 +3568,8 @@ function _resolveClue(round, clueType){
 function pickRound(names,cfg,usedList){
   var langs=cfg.langs||LANGS;
   var cats=cfg.cats||["Movies","Foods","Locations"];
+  var eras=cfg.eras||["classic","retro","modern"];
+
   // map cat labels to c values
   function catAllowed(r){
     if(r.c==="Food") return cats.indexOf("Foods")>=0;
@@ -3526,6 +3577,17 @@ function pickRound(names,cfg,usedList){
     if(r.c==="Movie") return cats.indexOf("Movies")>=0;
     if(r.c==="Custom") return cats.indexOf("Custom")>=0||cats.indexOf(r.customCat||"")>=0;
     return true;
+  }
+
+  // Era filter: only applies to Movie entries; Food/Location/Custom always pass through
+  function eraAllowed(r){
+    if(r.c!=="Movie") return true; // Food, Location, Custom ignore era
+    var y=parseInt(r.y||"0");
+    if(isNaN(y)||y===0) return true; // no year → don't filter out
+    for(var ei=0;ei<ERAS.length;ei++){
+      if(eras.indexOf(ERAS[ei].key)>=0&&y>=ERAS[ei].minY&&y<=ERAS[ei].maxY) return true;
+    }
+    return false;
   }
   var now=Date.now();
 
@@ -3545,6 +3607,7 @@ function pickRound(names,cfg,usedList){
     if(usedThisGame(i)) continue;
     if(usedToday(i)) continue;
     if(!catAllowed(r)) continue;
+    if(!eraAllowed(r)) continue;
     if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
   }
 
@@ -3554,11 +3617,12 @@ function pickRound(names,cfg,usedList){
       var r=ALL_POOL[i];
       if(usedThisGame(i)) continue;
       if(!catAllowed(r)) continue;
+      if(!eraAllowed(r)) continue;
       if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
     }
   }
 
-  // Fallback 2: full reset
+  // Fallback 2: full reset (ignore all dedup + era to avoid getting stuck)
   if(!avail.length){
     saveDailyUsed([]);
     SESSION_USED=[];
@@ -3566,6 +3630,7 @@ function pickRound(names,cfg,usedList){
     for(var i=0;i<ALL_POOL.length;i++){
       var r=ALL_POOL[i];
       if(!catAllowed(r)) continue;
+      if(!eraAllowed(r)) continue;
       if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
     }
   }
@@ -3640,7 +3705,7 @@ function startGame(){
     if(nm) names.push(nm);
   }
   if(names.length<3) return;
-  var cfg={tr:s.tr,dbl:s.dbl&&s.cnt>=5,tm:s.tm&&s.cnt>=4&&s.cnt%2===0,pts:s.pts,langs:s.langs,diff:s.diff,cats:s.cats||["Movies","Foods","Locations"]};
+  var cfg={tr:s.tr,dbl:s.dbl&&s.cnt>=5,tm:s.tm&&s.cnt>=4&&s.cnt%2===0,pts:s.pts,langs:s.langs,diff:s.diff,cats:s.cats||["Movies","Foods","Locations"],eras:s.eras||["classic","retro","modern"]};
   G.players=names; G.cfg=cfg;
   G.scores={}; for(var i=0;i<names.length;i++) G.scores[i]=0;
   G.tscores={0:0,1:0};
@@ -3963,6 +4028,14 @@ function togCat(key){
   if(idx>=0){if(cats.length>1)cats.splice(idx,1);}
   else cats.push(key);
   G.ss.cats=cats;
+  drawSetup();
+}
+function togEra(key){
+  var eras=G.ss.eras||[];
+  var idx=eras.indexOf(key);
+  if(idx>=0){if(eras.length>1)eras.splice(idx,1);}  // must keep at least 1
+  else eras.push(key);
+  G.ss.eras=eras;
   drawSetup();
 }
 function tog(k){
