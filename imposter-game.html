@@ -4926,9 +4926,9 @@ function drawOnlineSpinner(data){
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
   html+="<p class='spin-result-name' id='spinWinnerName'></p>";
   if(isHost){
-    html+="<button class='spin-btn' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
+    html+="<button class='spin-btn' onclick='hostMoveToRoles()'>REVEAL ROLES 🎬</button>";
   } else {
-    html+="<p class='spin-waiting'>Waiting for host to start discussion…</p>";
+    html+="<p class='spin-waiting'>Waiting for host to reveal roles…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   }
   html+="</div>";
@@ -4962,6 +4962,11 @@ function drawOnlineSpinner(data){
       }, 4200);
     }, 600);
   }
+}
+
+function hostMoveToRoles(){
+  // spinner → playing (role reveal). showMyRole will show START DISCUSSION button.
+  ONLINE.roomRef.update({phase:"playing"});
 }
 
 function hostMoveDiscuss(){
@@ -5278,18 +5283,16 @@ function hostRevealFromGuess(){
   var result=data.result||{};
   var guesses=result.guesses||{};
   var players=data.players||[];
-  var impIdxs=data.impIdxs||[];
   var round=data.round||{};
 
-  // Convert key-based guesses to idx-based and add bonus to scores
+  // Convert key-based guesses to idx-based, add guess bonus to scores
   var idxGuesses={};
   var scores=data.scores||{};
   for(var k in guesses){
     for(var i=0;i<players.length;i++){
       if(sanitizeKey(players[i])===k){
         idxGuesses[i]=guesses[k];
-        // Add guess bonus if correct
-        if(guesses[k]&&guesses[k].trim().toLowerCase()===round.n.toLowerCase()){
+        if(guesses[k]&&guesses[k]!=="(skip)"&&guesses[k].trim().toLowerCase()===round.n.toLowerCase()){
           scores[i]=(scores[i]||0)+PTS.ig;
         }
         break;
@@ -5299,6 +5302,7 @@ function hostRevealFromGuess(){
   ONLINE.roomRef.update({
     phase:"result",
     scores:scores,
+    roundHistory:data.roundHistory||[],
     result:{votedIdx:result.votedIdx,impCaught:result.impCaught,tally:result.tally,impGuesses:idxGuesses}
   });
 }
@@ -5309,8 +5313,9 @@ function hostShowResult(){
   var votes=data.votes||{};
   var players=data.players||[];
   var impIdxs=data.impIdxs||[];
+  var roundNum=data.roundNum||1;
 
-  // tally votes — values stored as player indices
+  // tally votes
   var tally={};
   for(var k in votes){
     var v=parseInt(votes[k]);
@@ -5321,11 +5326,10 @@ function hostShowResult(){
   var topCandidates=[];
   for(var idx in tally){if(tally[idx]===maxV) topCandidates.push(parseInt(idx));}
   var maxIdx=topCandidates.length===1?topCandidates[0]:-1;
-
   var impCaught=maxIdx>=0&&impIdxs.indexOf(maxIdx)>=0;
   var cfg=data.cfg||{};
 
-  // Calculate and persist cumulative scores so all clients can show them
+  // Persist cumulative scores
   var prevScores=data.scores||{};
   var newScores={};
   for(var i=0;i<players.length;i++){
@@ -5333,16 +5337,29 @@ function hostShowResult(){
     newScores[i]=(prevScores[i]||0)+d;
   }
 
+  // Append this round to roundHistory (with votes snapshot for grudge tracker)
+  var roundHistory=data.roundHistory||[];
+  // Firebase arrays can be tricky — use length as index
+  var newHistoryEntry={
+    roundNum:roundNum,
+    impIdxs:impIdxs,
+    caught:impCaught,
+    votes:votes  // snapshot of votes for grudge tracker
+  };
+  var updatedHistory=roundHistory.concat([newHistoryEntry]);
+
   if(impCaught&&cfg.pts!==false){
     ONLINE.roomRef.update({
       phase:"guess",
       scores:newScores,
+      roundHistory:updatedHistory,
       result:{votedIdx:maxIdx,impCaught:impCaught,tally:tally,guesses:{}}
     });
   } else {
     ONLINE.roomRef.update({
       phase:"result",
       scores:newScores,
+      roundHistory:updatedHistory,
       result:{votedIdx:maxIdx,impCaught:impCaught,tally:tally}
     });
   }
@@ -5362,47 +5379,31 @@ function drawOnlineResult(data){
   var totalRounds=data.cfg&&data.cfg.tr?data.cfg.tr:5;
   var isTie=!impCaught&&!imposterRevealed&&votedIdx===-1&&Object.keys(data.votes||{}).length>0;
 
-  // ── points calculation (mirrors offline showResult) ──────
-  var scores=data.scores||{};  // cumulative scores per playerIdx from Firebase
+  // ── points display ───────────────────────────────────────
+  // scores in Firebase = already-updated cumulative scores (written by hostShowResult)
+  // delta here is purely for the "+X this round" label — do NOT add to scores again
+  var scores=data.scores||{};
   var delta={};
   for(var i=0;i<players.length;i++) delta[i]=0;
   var isImpFn=function(i){return impIdxs.indexOf(i)>=0;};
   if(impCaught){
-    for(var i=0;i<players.length;i++){
-      delta[i]+=isImpFn(i)?PTS.ic:PTS.pc;
-    }
+    for(var i=0;i<players.length;i++) delta[i]=isImpFn(i)?PTS.ic:PTS.pc;
   } else {
-    for(var i=0;i<players.length;i++){
-      delta[i]+=isImpFn(i)?PTS.ie:PTS.pe;
-    }
+    for(var i=0;i<players.length;i++) delta[i]=isImpFn(i)?PTS.ie:PTS.pe;
   }
-  // Guess bonus
+  // Guess bonus delta (for display only)
   var impGuesses=result.impGuesses||{};
   for(var ig in impGuesses){
     var igIdx=parseInt(ig);
-    if(isNaN(igIdx)) continue;
-    var gval=(impGuesses[ig]||"").trim().toLowerCase();
-    if(gval===round.n.toLowerCase()) delta[igIdx]+=PTS.ig;
-  }
-  // Also check guesses stored as player-name keys
-  for(var k in impGuesses){
-    var kidx=-1;
-    for(var pi=0;pi<players.length;pi++){
-      if(sanitizeKey(players[pi])===k){kidx=pi;break;}
-    }
-    if(kidx>=0&&!isNaN(kidx)&&impGuesses[k]){
-      var gval2=(impGuesses[k]||"").trim().toLowerCase();
-      if(gval2===round.n.toLowerCase()&&delta[kidx]===PTS.ic){
-        // already handled above — skip
-      }
+    if(!isNaN(igIdx)){
+      var gval=(impGuesses[ig]||"").trim().toLowerCase();
+      if(gval&&gval!=="(skip)"&&round.n&&gval===round.n.toLowerCase()) delta[igIdx]+=PTS.ig;
     }
   }
 
-  // New cumulative scores
-  var newS={};
-  for(var i=0;i<players.length;i++) newS[i]=(scores[i]||0)+delta[i];
+  // Sort by final cumulative score descending
   var sorted=players.map(function(_,i){return i;});
-  sorted.sort(function(a,b){return newS[b]-newS[a];});
+  sorted.sort(function(a,b){return (scores[b]||0)-(scores[a]||0);});
 
   var html="<div class='page'><div class='card'>";
   html+=film();
@@ -5465,12 +5466,12 @@ function drawOnlineResult(data){
       var isImpP=isImpFn(idx);
       var guessBonus=0;
       if(isImpP){
-        // find their guess
         var pkey=sanitizeKey(players[idx]);
-        var pguess=(impGuesses[pkey]||impGuesses[idx]||"").trim().toLowerCase();
-        if(pguess&&pguess===round.n.toLowerCase()) guessBonus=PTS.ig;
+        var pguess=(impGuesses[pkey]||impGuesses[String(idx)]||"").trim().toLowerCase();
+        if(pguess&&pguess!=="(skip)"&&round.n&&pguess===round.n.toLowerCase()) guessBonus=PTS.ig;
       }
       var baseD=delta[idx]-guessBonus;
+      var finalScore=scores[idx]||0;
       html+="<div class='trow2' style='"+(isImpP?"border-color:rgba(231,76,60,.35)":"")+"'>";
       html+="<span class='trnk'>#"+(ri+1)+"</span>";
       html+="<div class='tav' style='background:"+COLORS[idx%COLORS.length]+"'>"+AVS[idx%AVS.length]+"</div>";
@@ -5480,7 +5481,7 @@ function drawOnlineResult(data){
       } else {
         html+="<span class='tdlt' style='color:"+(delta[idx]>=0?"#2ecc71":"#e74c3c")+"'>"+(delta[idx]>=0?"+":"")+delta[idx]+"</span>";
       }
-      html+="<span class='ttot'>"+newS[idx]+"pt</span></div>";
+      html+="<span class='ttot'>"+finalScore+"pt</span></div>";
     }
     html+="</div>";
   }
