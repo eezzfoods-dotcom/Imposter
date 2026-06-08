@@ -1713,26 +1713,63 @@ var ROUNDS=[
   {c:"Movie",l:"Tamil",n:"Koozhangal",d:"P.S. Vinothraj",y:"2021",g:"A minimalist drama about a father and son walking through a drought-hit landscape",hero:"Karuththadaiyaan",heroine:"None",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Anbirkiniyal",d:"Sarjun KM",y:"2021",g:"A thriller about a woman who discovers her husband has a dark past",hero:"Jai",heroine:"Lijomol Jose",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Vendhu Thanindhathu Kaadu",d:"Gautham Menon",y:"2022",g:"A gripping story about a young man's violent rise in the Mumbai underworld",hero:"Silambarasan",heroine:"Siddhi Idnani",comedian:"None"},
-  {c:"Location",l:"Location",n:"Taj Mahal",d:"Agra, Uttar Pradesh",g:"A 17th-century ivory-white marble mausoleum built by Emperor Shah Jahan"},
-  {c:"Location",l:"Location",n:"Varanasi",d:"Uttar Pradesh",g:"One of the world's oldest living cities, on the banks of the Ganges"},
-  {c:"Location",l:"Location",n:"Jaipur",d:"Rajasthan",g:"The 'Pink City' famous for palaces, forts, and vibrant bazaars"},
-  {c:"Location",l:"Location",n:"Kerala Backwaters",d:"Kerala",g:"A network of scenic lagoons and canals famous for houseboat cruises"},
-  {c:"Location",l:"Location",n:"Rameswaram",d:"Tamil Nadu",g:"A holy pilgrimage island city connected to Sri Lanka by the Adam's Bridge"},
-  {c:"Location",l:"Location",n:"Ooty",d:"Nilgiris, Tamil Nadu",g:"A mountain hill station known for tea gardens and the heritage toy train"},
-  {c:"Location",l:"Location",n:"Hampi",d:"Karnataka",g:"A UNESCO World Heritage ruined city of the Vijayanagara Empire"},
-  {c:"Location",l:"Location",n:"Coorg",d:"Karnataka",g:"A lush hill district known for coffee plantations and misty valleys"},
-  {c:"Location",l:"Location",n:"Munnar",d:"Kerala",g:"A high-altitude hill station famous for rolling tea estates"},
-  {c:"Location",l:"Location",n:"Marina Beach",d:"Chennai, Tamil Nadu",g:"The world's second longest natural urban beach"},
-  {c:"Location",l:"Location",n:"Meenakshi Amman Temple",d:"Madurai, Tamil Nadu",g:"A massive ancient Dravidian temple with towering painted gopurams"},
-  {c:"Location",l:"Location",n:"Pondicherry",d:"Tamil Nadu coast",g:"A French colonial town with colourful villas, ashrams, and beaches"},
-  {c:"Location",l:"Location",n:"Kodaikanal",d:"Tamil Nadu",g:"A misty hill station with a star-shaped lake and scenic viewpoints"},
-  {c:"Location",l:"Location",n:"Mysore Palace",d:"Karnataka",g:"A grand illuminated royal palace and one of India's most visited monuments"},
-  {c:"Location",l:"Location",n:"Gateway of India",d:"Mumbai, Maharashtra",g:"A colonial-era arch monument overlooking the Arabian Sea"},
-  {c:"Location",l:"Location",n:"Leh-Ladakh",d:"Jammu & Kashmir",g:"A high-altitude desert plateau with Buddhist monasteries and stark mountains"},
-  {c:"Location",l:"Location",n:"Andaman Islands",d:"Bay of Bengal",g:"An archipelago known for pristine beaches, coral reefs, and clear turquoise waters"},
-  {c:"Location",l:"Location",n:"Darjeeling",d:"West Bengal",g:"A Himalayan town famous for tea, the Tiger Hill sunrise, and toy trains"},
-  {c:"Location",l:"Location",n:"Charminar",d:"Hyderabad, Telangana",g:"A 16th-century mosque and monument at the heart of the old city"},
-  {c:"Location",l:"Location",n:"Valley of Flowers",d:"Uttarakhand",g:"A UNESCO World Heritage alpine meadow blooming with hundreds of wildflowers"},
+  // ── COMMON LOCATIONS (Spyfall-style — imposter gets a role, not the place name) ──
+  {c:"Location",l:"Location",n:"School",d:"Student",g:"A place where children learn subjects, write exams and play during recess"},
+  {c:"Location",l:"Location",n:"Hospital",d:"Nurse",g:"A place where sick people are treated, doctors examine patients and surgeries are performed"},
+  {c:"Location",l:"Location",n:"Airport",d:"Passenger",g:"A place where aeroplanes land and take off, people check in luggage and wait in departure lounges"},
+  {c:"Location",l:"Location",n:"Railway Station",d:"Commuter",g:"A busy transit hub where trains arrive and depart, people buy tickets and wait on crowded platforms"},
+  {c:"Location",l:"Location",n:"Bank",d:"Security Guard",g:"A place where people deposit money, open accounts, use ATMs and take loans from tellers"},
+  {c:"Location",l:"Location",n:"Police Station",d:"Constable",g:"A place where crimes are reported, FIRs are filed and suspects are held in lock-up"},
+  {c:"Location",l:"Location",n:"Cinema Theatre",d:"Ticket Seller",g:"A dark hall where movies play on a big screen while people eat popcorn and react loudly"},
+  {c:"Location",l:"Location",n:"Restaurant",d:"Waiter",g:"A place where people order food from a menu, chefs cook in the kitchen and bills arrive at the end"},
+  {c:"Location",l:"Location",n:"Supermarket",d:"Cashier",g:"A large store where people fill trolleys with groceries, browse aisles and pay at checkout"},
+  {c:"Location",l:"Location",n:"Hotel",d:"Receptionist",g:"A place where travellers check in, sleep in air-conditioned rooms and enjoy breakfast buffets"},
+  {c:"Location",l:"Location",n:"Gym",d:"Personal Trainer",g:"A place full of equipment where people lift weights, run on treadmills and sweat for fitness"},
+  {c:"Location",l:"Location",n:"Library",d:"Librarian",g:"A quiet place with shelves of books where people read, borrow titles and must stay silent"},
+  {c:"Location",l:"Location",n:"Wedding Hall",d:"Caterer",g:"A decorated venue where brides and grooms get married while guests eat biryani and dance"},
+  {c:"Location",l:"Location",n:"Temple",d:"Priest",g:"A holy place where devotees pray, offer flowers, ring bells and receive prasadam"},
+  {c:"Location",l:"Location",n:"Bus Stand",d:"Conductor",g:"A noisy place where buses arrive and leave constantly and vendors sell snacks through windows"},
+  {c:"Location",l:"Location",n:"Office",d:"Peon",g:"A place with desks, computers and endless meetings where employees work under tight deadlines"},
+  {c:"Location",l:"Location",n:"Court",d:"Lawyer",g:"A formal hall where judges hear arguments, lawyers cross-examine and verdicts are announced"},
+  {c:"Location",l:"Location",n:"Market / Bazaar",d:"Vegetable Vendor",g:"A crowded place where vegetables, clothes and goods are sold by hard bargaining"},
+  {c:"Location",l:"Location",n:"Graveyard",d:"Gravedigger",g:"A silent ground with tombstones where the dead are buried and families come to grieve"},
+  {c:"Location",l:"Location",n:"Beach",d:"Lifeguard",g:"A sandy shore where waves crash, children build sandcastles and fishermen cast their nets"},
+  {c:"Location",l:"Location",n:"Zoo",d:"Zookeeper",g:"An enclosed park where wild animals are kept in habitats for visitors to watch and photograph"},
+  {c:"Location",l:"Location",n:"Submarine",d:"Navigator",g:"An underwater military vessel that dives deep, fires torpedoes and operates in total secrecy"},
+  {c:"Location",l:"Location",n:"Space Station",d:"Astronaut",g:"A floating laboratory orbiting Earth where scientists live in zero gravity for months"},
+  {c:"Location",l:"Location",n:"Casino",d:"Dealer",g:"A glamorous hall where people gamble at card tables, spin roulette and win or lose fortunes"},
+  {c:"Location",l:"Location",n:"Prison",d:"Prisoner",g:"A locked facility where convicted criminals serve sentences under heavy guard and strict rules"},
+  {c:"Location",l:"Location",n:"Construction Site",d:"Labourer",g:"A noisy site with cranes, cement mixers and hard-hat workers building a structure from scratch"},
+  {c:"Location",l:"Location",n:"Petrol Bunk",d:"Fuel Attendant",g:"A roadside station where vehicles stop to fill petrol or diesel and sometimes check tyre air"},
+  {c:"Location",l:"Location",n:"Salon / Barber Shop",d:"Barber",g:"A place where people get haircuts, shaves, facials and sit under capes staring at the mirror"},
+  {c:"Location",l:"Location",n:"Pharmacy",d:"Pharmacist",g:"A shop where people buy prescription medicines, vitamins and ask about side effects"},
+  {c:"Location",l:"Location",n:"Fire Station",d:"Firefighter",g:"A station where red engines are parked, brave firefighters train and rush out at alarm bells"},
+  {c:"Location",l:"Location",n:"Military Base",d:"Soldier",g:"A secured area where troops train in formation, weapons are stored and strict discipline rules"},
+  {c:"Location",l:"Location",n:"Amusement Park",d:"Ride Operator",g:"A fun park with roller coasters, giant wheels and stalls where people scream and win toys"},
+  {c:"Location",l:"Location",n:"Circus",d:"Clown",g:"A big tent where acrobats balance on wires, lions jump through hoops and the crowd cheers"},
+  {c:"Location",l:"Location",n:"Science Lab",d:"Scientist",g:"A room full of test tubes, chemicals and microscopes where experiments and discoveries happen"},
+  {c:"Location",l:"Location",n:"Farm",d:"Farmer",g:"Open land where crops are grown, cows are milked at dawn and tractors plough the soil"},
+  {c:"Location",l:"Location",n:"Pirate Ship",d:"Pirate",g:"A wooden sailing ship flying a skull flag raiding other vessels for treasure on the high seas"},
+  {c:"Location",l:"Location",n:"Haunted House",d:"Ghost",g:"A creaky old house where lights flicker, doors slam on their own and eerie sounds echo at night"},
+  {c:"Location",l:"Location",n:"Cruise Ship",d:"Captain",g:"A massive floating hotel sailing the ocean with restaurants, pools, casinos and live entertainment"},
+  {c:"Location",l:"Location",n:"Cricket Stadium",d:"Groundsman",g:"A massive arena with thousands of fans cheering boundaries and wickets in a tense match"},
+  {c:"Location",l:"Location",n:"TV Studio",d:"Camera Operator",g:"A brightly lit set where anchors present news, actors film shows and directors shout action"},
+  {c:"Location",l:"Location",n:"Mountain Trek",d:"Trekker",g:"A steep forest trail through rocks and mist where hikers carry backpacks and camp overnight"},
+  {c:"Location",l:"Location",n:"Bank Robbery",d:"Robber",g:"A tense situation where masked criminals hold hostages, demand cash and threaten everyone"},
+  {c:"Location",l:"Location",n:"Kindergarten",d:"Teacher",g:"A colourful classroom for tiny children who sing rhymes, paint pictures and learn the alphabet"},
+  {c:"Location",l:"Location",n:"Night Club",d:"DJ",g:"A loud dark hall with neon lights, thumping bass music and people dancing until dawn"},
+  {c:"Location",l:"Location",n:"Oil Rig",d:"Driller",g:"A massive offshore platform in the middle of the sea where workers drill into the seabed for crude oil"},
+  {c:"Location",l:"Location",n:"Spy Headquarters",d:"Spy",g:"A secret underground facility with screens, disguises and top-secret mission briefings"},
+  {c:"Location",l:"Location",n:"Orphanage",d:"Caretaker",g:"A home for children without parents where they eat together, study and sleep in shared rooms"},
+  {c:"Location",l:"Location",n:"Fishing Boat",d:"Fisherman",g:"A small boat that sets out before dawn, casts wide nets and returns with the day's fish catch"},
+  {c:"Location",l:"Location",n:"Refugee Camp",d:"Aid Worker",g:"A temporary settlement of tents where displaced families live and wait for help to arrive"},
+  {c:"Location",l:"Location",n:"Post Office",d:"Postman",g:"A government office where people send parcels, pay bills and collect registered letters"},
+  {c:"Location",l:"Location",n:"Ambulance",d:"Paramedic",g:"A rushing emergency vehicle with sirens blaring, carrying a patient and medical equipment"},
+  {c:"Location",l:"Location",n:"Courtroom",d:"Judge",g:"A formal legal space where evidence is presented, witnesses are questioned and justice is delivered"},
+  {c:"Location",l:"Location",n:"Dentist Clinic",d:"Dentist",g:"A place with reclining chairs, bright lights and drilling sounds where people dread getting fillings"},
+  {c:"Location",l:"Location",n:"Classroom Exam",d:"Invigilator",g:"A silent room with rows of desks where students write answers under strict time pressure"},
+  {c:"Location",l:"Location",n:"Haunted Forest",d:"Lost Hiker",g:"A dark dense forest where strange sounds come from everywhere and no one can find the way out"},
+
 
   // ── CLASSICS (pre-1990) ──────────────────────────────────
   {c:"Movie",l:"Tamil",n:"Thiruvilaiyadal",d:"A. P. Nagarajan",y:"1965",g:"Lord Shiva descends to earth to help a humble poet win a contest",hero:"Sivaji Ganesan",heroine:"K. R. Vijaya",comedian:"Nagesh"},
@@ -2461,7 +2498,7 @@ var SESSION_USED=[]; // kept for same-session dedup within a game
 var META={
   "Movie":{e:"🎬",col:"#e8a020",bg:"rgba(232,160,32,.09)",br:"rgba(232,160,32,.35)",lbl:"Director"},
   "Food":{e:"🍛",col:"#e05520",bg:"rgba(224,85,32,.09)", br:"rgba(224,85,32,.35)", lbl:"Origin"},
-  "Location":{e:"📍",col:"#1a9e6e",bg:"rgba(26,158,110,.09)",br:"rgba(26,158,110,.35)",lbl:"Country/State"}
+  "Location":{e:"📍",col:"#1a9e6e",bg:"rgba(26,158,110,.09)",br:"rgba(26,158,110,.35)",lbl:"Your Role"}
 };
 var CATS=["Movies","Foods","Locations"]; // category filter labels
 var LANGS=["Tamil","Telugu","Hindi","Malayalam","English"];
@@ -2929,6 +2966,9 @@ function _buildFlipBack(i){
   var back=document.getElementById('flipBack');
   if(!back) return;
   var inner='';
+  var isLocation=r.c==="Location";
+  var isFood=r.c==="Food";
+
   if(isImp){
     back.style.cssText='background:#fff1f3;border:2px solid rgba(231,76,60,.4);border-radius:20px';
     inner+='<div style="text-align:center;width:100%">';
@@ -2936,32 +2976,52 @@ function _buildFlipBack(i){
     inner+='<p style="font-size:.5rem;color:#999;letter-spacing:.15em;font-weight:700;margin-bottom:1px">YOU ARE THE</p>';
     inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.8rem;color:#e74c3c;letter-spacing:.05em;line-height:1;margin:0 0 8px">IMPOSTER</p>';
     inner+='</div>';
-    inner+='<div style="background:'+meta.bg+';border:1px solid '+meta.br+';border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;width:100%;box-sizing:border-box;flex-shrink:0">';
-    var diff=G.cfg.diff||"medium";
-    if(diff==="easy"){
-      inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟢 EASY — TWO CLUES</p>';
-      inner+='<p style="font-size:.82rem;color:var(--text);margin-bottom:3px"><strong>'+meta.lbl+':</strong> '+h(r.d)+'</p>';
-      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+(r.l==="Food"?"Desc":"Year")+':</strong> '+(r.l==="Food"?h(r.g):(r.y||""))+'</p>';
-    } else if(diff==="medium"){
-      var rc=G.resolvedClue||_resolveClue(r,G.clueType);
-      inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟡 MEDIUM — ONE CLUE</p>';
-      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+rc.label+':</strong> '+h(rc.value)+'</p>';
+
+    if(isLocation){
+      // Spyfall mode — imposter gets NO location clue at all
+      inner+='<div style="background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.3);border-radius:10px;padding:12px 14px;margin-bottom:8px;text-align:center;width:100%;box-sizing:border-box;flex-shrink:0">';
+      inner+='<p style="font-size:.75rem;color:#e74c3c;font-weight:700;margin-bottom:6px">📍 LOCATION MODE</p>';
+      inner+='<p style="font-size:.78rem;color:var(--text2);line-height:1.5">Everyone else knows the location and their role.<br><strong>You don\'t know where you are!</strong><br><br>Ask clever questions, listen carefully, and bluff your way through. Don\'t get caught!</p>';
+      inner+='</div>';
     } else {
-      inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🔴 HARD — VAGUE HINT</p>';
-      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>Hint:</strong> '+h(r.g)+'</p>';
+      // Movie/Food mode — show clue as before
+      inner+='<div style="background:'+meta.bg+';border:1px solid '+meta.br+';border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;width:100%;box-sizing:border-box;flex-shrink:0">';
+      var diff=G.cfg.diff||"medium";
+      if(diff==="easy"){
+        inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟢 EASY — TWO CLUES</p>';
+        inner+='<p style="font-size:.82rem;color:var(--text);margin-bottom:3px"><strong>'+meta.lbl+':</strong> '+h(r.d)+'</p>';
+        inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+(isFood?"Desc":"Year")+':</strong> '+(isFood?h(r.g):(r.y||""))+'</p>';
+      } else if(diff==="medium"){
+        var rc=G.resolvedClue||_resolveClue(r,G.clueType);
+        inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟡 MEDIUM — ONE CLUE</p>';
+        inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+rc.label+':</strong> '+h(rc.value)+'</p>';
+      } else {
+        inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🔴 HARD — VAGUE HINT</p>';
+        inner+='<p style="font-size:.82rem;color:var(--text)"><strong>Hint:</strong> '+h(r.g)+'</p>';
+      }
+      inner+='</div>';
     }
-    inner+='</div>';
-    inner+='<p style="font-size:.62rem;color:#999;margin-bottom:8px;text-align:center">Bluff! You don\'t know the exact name.</p>';
+    inner+='<p style="font-size:.62rem;color:#999;margin-bottom:8px;text-align:center">'+(isLocation?"Ask questions to figure out the location!":"Bluff! You don\'t know the exact name.")+'</p>';
     inner+='<button class="db" style="background:linear-gradient(135deg,#C2185B,#E91E63);width:100%;flex-shrink:0" onclick="doneReveal()">UNDERSTOOD ✓</button>';
+
   } else {
+    // CREWMATE card
     back.style.cssText='background:'+c+'10;border:2px solid '+c+'55;border-radius:20px';
     inner+='<div style="text-align:center;width:100%;flex-shrink:0">';
-    inner+='<p style="font-size:.52rem;letter-spacing:.28em;color:var(--text3);font-weight:700;margin-bottom:4px">'+(r.c==="Food"?"THE FOOD IS":r.c==="Location"?"THE LOCATION IS":"THE MOVIE IS")+'</p>';
-    inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.9rem;color:'+c+';letter-spacing:.04em;line-height:1.1;margin:4px 0 3px;word-break:break-word">'+h(r.n)+'</p>';
-    inner+='<p style="font-size:.68rem;color:var(--text3);margin-bottom:10px">'+h(r.d)+(r.l&&r.l!=="Food"&&r.l!=="Location"?' · '+r.l:'')+'</p>';
+    if(isLocation){
+      inner+='<p style="font-size:.52rem;letter-spacing:.28em;color:var(--text3);font-weight:700;margin-bottom:4px">THE LOCATION IS</p>';
+      inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.9rem;color:'+c+';letter-spacing:.04em;line-height:1.1;margin:4px 0 3px;word-break:break-word">'+h(r.n)+'</p>';
+      inner+='<div style="display:inline-block;background:'+c+'22;border:1px solid '+c+'55;border-radius:20px;padding:3px 14px;margin-bottom:10px">';
+      inner+='<p style="font-size:.72rem;color:'+c+';font-weight:700">Your role: '+h(r.d)+'</p>';
+      inner+='</div>';
+    } else {
+      inner+='<p style="font-size:.52rem;letter-spacing:.28em;color:var(--text3);font-weight:700;margin-bottom:4px">'+(isFood?"THE FOOD IS":"THE MOVIE IS")+'</p>';
+      inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.9rem;color:'+c+';letter-spacing:.04em;line-height:1.1;margin:4px 0 3px;word-break:break-word">'+h(r.n)+'</p>';
+      inner+='<p style="font-size:.68rem;color:var(--text3);margin-bottom:10px">'+h(r.d)+'</p>';
+    }
     inner+='</div>';
     inner+='<div style="padding:7px 10px;border-radius:10px;background:rgba(0,0,0,.05);margin-bottom:10px;flex-shrink:0">';
-    inner+='<p style="font-size:.68rem;color:var(--text3);text-align:center">💡 Discuss — never say the name!</p>';
+    inner+='<p style="font-size:.68rem;color:var(--text3);text-align:center">'+(isLocation?"💡 Everyone has a role — ask questions, find who doesn\'t belong!":"💡 Discuss — never say the name!")+'</p>';
     inner+='</div>';
     inner+='<button class="db" style="background:'+c+';width:100%;flex-shrink:0" onclick="doneReveal()">GOT IT ✓</button>';
   }
@@ -4892,7 +4952,8 @@ function showMyRole(data){
   var c=COLORS[myIdx]||"#9C27B0";
   var a=AVS[myIdx];
   var cfg=data.cfg||{};
-  var clueType=data.clueType||"director";
+  var isLocation=round.c==="Location";
+  var isFood=round.c==="Food";
 
   var html="<div class='page dark'><div class='ccol'><div class='fi' style='width:100%'>";
   html+="<div class='bav' style='border:3px solid "+c+";background:rgba(156,39,176,.12);width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 14px'>"+a+"</div>";
@@ -4908,35 +4969,56 @@ function showMyRole(data){
     for(var x=0;x<impIdxs.length;x++){if(impIdxs[x]!==myIdx){partnerIdx=impIdxs[x];break;}}
     if(partnerIdx>=0) html+="<p class='ipar'>Partner: <strong style='color:#e74c3c'>"+h(data.players[partnerIdx])+"</strong></p>";
     html+="</div>";
-    html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
-    html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(round.l==="Food"?"Indian Food":round.l+" Movie")+"</span></div>";
-    var diff=cfg.diff||"medium";
-    html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
-    if(diff==="easy"){
-      html+="<p class='ceye' style='color:#2ecc71'>🟢 EASY — TWO CLUES</p>";
-      html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(round.d)+"</span></div>";
-      html+="<div class='crow2'><span class='ck'>"+(round.l==="Food"?"Description":"Year")+"</span><span class='cv'>"+(round.l==="Food"?h(round.g):(round.y||""))+"</span></div>";
-    } else if(diff==="medium"){
-      var cluelbl=data.resolvedClueLabel||"Director";
-      var clueval=data.resolvedClueValue||round.d;
-      html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
-      html+="<div class='crow2'><span class='ck'>"+cluelbl+"</span><span class='cv'>"+h(clueval)+"</span></div>";
+
+    if(isLocation){
+      // Spyfall — imposter gets NO location clue
+      html+="<div class='ccard' style='border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.06);text-align:center'>";
+      html+="<p class='ceye' style='color:#e74c3c'>📍 LOCATION MODE</p>";
+      html+="<p style='font-size:.8rem;color:var(--text2);line-height:1.6;margin-top:6px'>Everyone knows the location and their role.<br><strong>You don't know where you are!</strong><br><br>Ask questions cleverly and bluff your way through!</p>";
+      html+="<p class='cnote' style='margin-top:10px'>Don't reveal you're the imposter!</p></div>";
     } else {
-      html+="<p class='ceye' style='color:#e74c3c'>🔴 HARD — VAGUE HINT</p>";
-      html+="<div class='crow2'><span class='ck'>Hint</span><span class='cv'>"+h(round.g)+"</span></div>";
+      html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
+      html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(isFood?"Indian Food":round.l+" Movie")+"</span></div>";
+      var diff=cfg.diff||"medium";
+      html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
+      if(diff==="easy"){
+        html+="<p class='ceye' style='color:#2ecc71'>🟢 EASY — TWO CLUES</p>";
+        html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(round.d)+"</span></div>";
+        html+="<div class='crow2'><span class='ck'>"+(isFood?"Description":"Year")+"</span><span class='cv'>"+(isFood?h(round.g):(round.y||""))+"</span></div>";
+      } else if(diff==="medium"){
+        var cluelbl=data.resolvedClueLabel||"Director";
+        var clueval=data.resolvedClueValue||round.d;
+        html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
+        html+="<div class='crow2'><span class='ck'>"+cluelbl+"</span><span class='cv'>"+h(clueval)+"</span></div>";
+      } else {
+        html+="<p class='ceye' style='color:#e74c3c'>🔴 HARD — VAGUE HINT</p>";
+        html+="<div class='crow2'><span class='ck'>Hint</span><span class='cv'>"+h(round.g)+"</span></div>";
+      }
+      html+="<p class='cnote'>You don't know the exact name — bluff using this clue!</p></div>";
     }
-    html+="<p class='cnote'>You don't know the exact name — bluff using this clue!</p></div>";
   } else {
     // crewmate
-    html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
-    html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(round.l==="Food"?"Indian Food":round.l+" Movie")+"</span></div>";
-    html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
-    html+="<p class='ceye' style='color:#00BFA5'>✅ YOU KNOW THE ANSWER</p>";
-    html+="<div class='crow2'><span class='ck'>Name</span><span class='cv' style='color:"+meta.col+";font-size:1.1rem'>"+h(round.n)+"</span></div>";
-    html+="<div class='crow2' style='margin-top:6px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(round.d)+"</span></div>";
-    if(round.y&&round.l!=="Food") html+="<div class='crow2' style='margin-top:4px'><span class='ck'>Year</span><span class='cv'>"+h(round.y)+"</span></div>";
-    html+="</div>";
-    html+="<div class='phint'><p class='phtxt'>Discuss &amp; figure out who the imposter is. Don't reveal the name directly — make them guess!</p></div>";
+    if(isLocation){
+      html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
+      html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>Location</span></div>";
+      html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
+      html+="<p class='ceye' style='color:#00BFA5'>📍 YOU KNOW THE LOCATION</p>";
+      html+="<div class='crow2'><span class='ck'>Location</span><span class='cv' style='color:"+meta.col+";font-size:1.1rem'>"+h(round.n)+"</span></div>";
+      html+="<div class='crow2' style='margin-top:6px;background:"+meta.col+"22;border-radius:8px;padding:6px 10px'>";
+      html+="<span class='ck'>Your role</span><span class='cv' style='color:"+meta.col+";font-weight:700'>"+h(round.d)+"</span></div>";
+      html+="</div>";
+      html+="<div class='phint'><p class='phtxt'>Ask questions about this location. Find who doesn't belong — that's the imposter! Don't reveal the name directly.</p></div>";
+    } else {
+      html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
+      html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(isFood?"Indian Food":round.l+" Movie")+"</span></div>";
+      html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
+      html+="<p class='ceye' style='color:#00BFA5'>✅ YOU KNOW THE ANSWER</p>";
+      html+="<div class='crow2'><span class='ck'>Name</span><span class='cv' style='color:"+meta.col+";font-size:1.1rem'>"+h(round.n)+"</span></div>";
+      html+="<div class='crow2' style='margin-top:6px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(round.d)+"</span></div>";
+      if(round.y&&!isFood) html+="<div class='crow2' style='margin-top:4px'><span class='ck'>Year</span><span class='cv'>"+h(round.y)+"</span></div>";
+      html+="</div>";
+      html+="<div class='phint'><p class='phtxt'>Discuss &amp; figure out who the imposter is. Don't reveal the name directly — make them guess!</p></div>";
+    }
   }
 
   var firstIdx=data.firstIdx||0;
@@ -5095,11 +5177,13 @@ function drawOnlineDiscuss(data){
   html+="</div></div>";
 
   // rules hint
-  var onlineClueHint=(data.resolvedClueLabel||"Director")+" name";
+  var onlineClueHint=round.c==="Location"
+    ? "Imposter doesn't know the location — find them!"
+    : (data.resolvedClueLabel||"Director")+" name";
   html+="<div class='rules' style='margin-bottom:14px'>";
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
   html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
-  html+="<p class='rule'>🟡 Medium · Imposter clue: "+onlineClueHint+"</p></div>";
+  html+="<p class='rule'>"+(round.c==="Location"?"📍 Location mode · "+onlineClueHint:"🟡 Medium · Imposter clue: "+onlineClueHint)+"</p></div>";
 
   // ── Next Round Vote panel (if not on last round)
   if(canNextRound){
