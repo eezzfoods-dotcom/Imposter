@@ -4665,30 +4665,74 @@ function listenRoom(){
   });
 }
 
+var _lastPhase=null;
+var _lastRoundNum=null;
+var _lastDiscussRound=null;
+var _lastVoteCount=null;
+var _lastResultPhase=null;
+
 function handleRoomUpdate(data){
-  // Reset NR trigger on every phase transition so next round's majority fires correctly
-  if(data.phase!=="discuss") _nrTriggered=false;
-  if(data.phase==="lobby"){
+  var phase=data.phase||"lobby";
+  var roundNum=data.roundNum||1;
+  var discussRound=data.discussRound||1;
+
+  // Reset NR trigger on every phase transition
+  if(phase!=="discuss") _nrTriggered=false;
+
+  // Spinner: never re-render if already spinning this seed (handled inside drawOnlineSpinner)
+  // Playing: never re-render role card once shown (it's a static read — no need to refresh)
+  if(phase==="playing" && _lastPhase==="playing" && roundNum===_lastRoundNum){
+    return; // role card already showing — don't wipe it
+  }
+
+  // Discuss: re-render only when NR votes change or discuss round changes
+  if(phase==="discuss" && _lastPhase==="discuss" && roundNum===_lastRoundNum && discussRound===_lastDiscussRound){
+    var voteCount=Object.keys(data.nextRoundVotes||{}).length;
+    if(voteCount===_lastVoteCount) return; // nothing changed that affects the UI
+    _lastVoteCount=voteCount;
+  } else if(phase==="discuss"){
+    _lastVoteCount=Object.keys(data.nextRoundVotes||{}).length;
+  }
+
+  // Vote: re-render only when vote count changes
+  if(phase==="vote" && _lastPhase==="vote" && roundNum===_lastRoundNum){
+    var vCount=Object.keys(data.votes||{}).length;
+    if(vCount===_lastVoteCount) return;
+    _lastVoteCount=vCount;
+  } else if(phase==="vote"){
+    _lastVoteCount=Object.keys(data.votes||{}).length;
+  }
+
+  _lastPhase=phase;
+  _lastRoundNum=roundNum;
+  _lastDiscussRound=discussRound;
+
+  if(phase==="lobby"){
     if(ONLINE.isHost) drawHostLobby(ONLINE.roomCode, data.players, data);
     else drawJoineeLobby(data);
-  } else if(data.phase==="spinner"){
+  } else if(phase==="spinner"){
     drawOnlineSpinner(data);
-  } else if(data.phase==="playing"){
+  } else if(phase==="playing"){
     showMyRole(data);
-  } else if(data.phase==="discuss"){
+  } else if(phase==="discuss"){
     checkOnlineNRMajority(data);
     drawOnlineDiscuss(data);
-  } else if(data.phase==="vote"){
+  } else if(phase==="vote"){
     drawOnlineVote(data);
-  } else if(data.phase==="guess"){
+  } else if(phase==="guess"){
+    // Re-render when guess count changes (someone submitted)
+    var gCount=Object.keys((data.result&&data.result.guesses)||{}).length;
+    if(_lastPhase==="guess"&&_lastVoteCount===gCount) return;
+    _lastVoteCount=gCount;
     drawOnlineGuess(data);
-  } else if(data.phase==="result"){
+  } else if(phase==="result"){
     drawOnlineResult(data);
-  } else if(data.phase==="leaderboard"){
+  } else if(phase==="leaderboard"){
     drawOnlineLeaderboard(data);
-  } else if(data.phase==="exit"){
+  } else if(phase==="exit"){
     if(ONLINE.listener) ONLINE.roomRef.off("value",ONLINE.listener);
     ONLINE={};
+    _lastPhase=null;_lastRoundNum=null;_lastDiscussRound=null;_lastVoteCount=null;
     drawModeSelect();
   }
 }
@@ -5969,6 +6013,8 @@ function hostNewGame(){
   var data=ONLINE.gameState||{};
   var players=data.players||[];
   var cfg=data.cfg||{};
+  // Reset dedup state so lobby renders fresh
+  _lastPhase=null;_lastRoundNum=null;_lastDiscussRound=null;_lastVoteCount=null;
 
   // Keep ALL existing players — just reset game state
   // Players don't need to re-scan or rejoin
