@@ -2849,7 +2849,7 @@ function drawSpinner(){
   html+="<div id='offSpinResult' style='display:none;text-align:center'>";
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
   html+="<p class='spin-result-name' id='offSpinName' style='color:"+segColors[firstIdx%segColors.length]+"'></p>";
-  html+="<button class='spin-btn' onclick='doPass()'>LET'S GO →</button>";
+  html+="<button class='spin-btn' onclick='drawDiscuss()'>START DISCUSSION 💬</button>";
   html+="</div>";
   html+="</div></div>";
 
@@ -3667,31 +3667,45 @@ function pickRound(names,cfg,usedList){
 
   var imps=[];
   if(cfg.tm){
+    // Team mode — one imposter per team
     var half=Math.floor(names.length/2);
     var aP=[],bP=[];
     for(var i=0;i<names.length;i++){if(G.teams[i]===0)aP.push(i);else bP.push(i);}
     imps=[bP[rnd(bP.length)],aP[rnd(aP.length)]];
   } else if(cfg.dbl&&names.length>=5){
-    // avoid anyone who's already been imposter this game; reset when all have had a turn
+    // Double imposter — round-robin so everyone gets a turn
     var usedImps=G.allGameImps||[];
     var freshPool=[];
     for(var i=0;i<names.length;i++) if(usedImps.indexOf(i)<0) freshPool.push(i);
-    if(freshPool.length<2){usedImps=[];freshPool=names.map(function(_,i){return i;});}
+    if(freshPool.length<2){
+      // Full reset — everyone has had a turn
+      usedImps=[];
+      freshPool=names.map(function(_,i){return i;});
+    }
+    // Shuffle fresh pool and pick 2
     freshPool.sort(function(){return Math.random()-.5;});
     imps=[freshPool[0],freshPool[1]];
-    G.allGameImps=(usedImps).concat(imps);
+    G.allGameImps=usedImps.concat(imps);
   } else {
-    // avoid anyone who's already been imposter this game; reset when all have had a turn
+    // Single imposter — strict round-robin so every player gets equal turns
     var usedImps=G.allGameImps||[];
+    // Build fresh pool: players not yet been imposter this cycle
     var freshPool=[];
     for(var i=0;i<names.length;i++) if(usedImps.indexOf(i)<0) freshPool.push(i);
-    if(!freshPool.length){usedImps=[];freshPool=names.map(function(_,i){return i;});}
-    // also avoid the last imposter within the fresh pool for back-to-back prevention
+    // If everyone has had a turn (or pool empty), start a new cycle
+    if(!freshPool.length){
+      usedImps=[];
+      freshPool=names.map(function(_,i){return i;});
+    }
+    // Remove the immediately previous imposter to avoid consecutive repeats
+    // But only if there's more than one option left
     var lastImp=(G.lastImps&&G.lastImps.length)?G.lastImps[0]:-1;
     var noRepeat=freshPool.filter(function(x){return x!==lastImp;});
-    var finalPool=noRepeat.length?noRepeat:freshPool;
-    imps=[finalPool[rnd(finalPool.length)]];
-    G.allGameImps=usedImps.concat(imps);
+    var finalPool=noRepeat.length>=1?noRepeat:freshPool;
+    // Pick randomly from the remaining fair pool
+    finalPool.sort(function(){return Math.random()-.5;});
+    imps=[finalPool[0]];
+    G.allGameImps=usedImps.concat([imps[0]]);
   }
   G.lastImps=imps;
   G.impIdxs=imps;
@@ -3704,7 +3718,19 @@ function pickRound(names,cfg,usedList){
   }
   G.passOrder=passOrder;  // e.g. [3,0,4,1,2] — random reveal order
   G.passIdx=0;            // index INTO passOrder, not player index directly
-  G.firstIdx=passOrder[rnd(names.length)]; // discussion starts at random player
+
+  // Pick who speaks first — but ensure they are NOT at passOrder[0] or [1]
+  // so watching card-reveal order gives no clue about who speaks first
+  var firstIdx;
+  if(names.length<=2){
+    firstIdx=passOrder[rnd(names.length)];
+  } else {
+    // Pick from the LAST half of passOrder — further from the start, harder to correlate
+    var safeStart=Math.floor(names.length/2);
+    var safeIdx=safeStart+rnd(names.length-safeStart);
+    firstIdx=passOrder[safeIdx];
+  }
+  G.firstIdx=firstIdx;
   // pick random clue type for medium difficulty — resolve actual value first to avoid fallbacks
   var r2=ALL_POOL[gi];
   if(G.cfg&&G.cfg.diff==="medium"&&r2.l==="Tamil"){
@@ -3746,7 +3772,7 @@ function startGame(){
     G.teams=null;
   }
   pickRound(names,cfg,[]);
-  drawSpinner();
+  drawPass(); // Start card reveals immediately — spinner shown AFTER all cards revealed
 }
 
 // ── NAVIGATION ───────────────────────────────────────────
@@ -3754,8 +3780,14 @@ function doPass(){drawPass();}
 function doReveal(){drawReveal();}
 function doneReveal(){
   var next=G.passIdx+1;
-  if(next<G.players.length){G.passIdx=next;drawPass();}
-  else drawDiscuss();
+  if(next<G.players.length){
+    G.passIdx=next;
+    drawPass();
+  } else {
+    // All cards revealed — NOW show spinner to pick first speaker
+    // This way nobody can correlate card-reveal position with first speaker
+    drawSpinner();
+  }
 }
 function doVote(){
   drawVote();
@@ -3800,7 +3832,7 @@ function goNext(){
   G.roundNum++;
   G.discussRound=1;
   pickRound(G.players,G.cfg,G.used);
-  drawSpinner();
+  drawPass(); // card reveals first, spinner after
 }
 
 
@@ -4668,10 +4700,25 @@ function hostStartGame(){
   if(filledSlots.length<3){alert("Need at least 3 players!");return;}
 
   var impIdxs=[];
-  var pool=filledSlots.slice();
-  pool.sort(function(){return Math.random()-.5;});
-  if(cfg.dbl&&filledSlots.length>=5){impIdxs=[pool[0],pool[1]];}
-  else{impIdxs=[pool[0]];}
+  // Round-robin: track who has been imposter to ensure fair rotation
+  var usedImps=data.usedImps||[];
+  var lastImp=data.lastImp!=null?data.lastImp:-1;
+  var freshPool=filledSlots.filter(function(i){return usedImps.indexOf(i)<0;});
+  if(!freshPool.length){
+    // Everyone has had a turn — start new cycle
+    usedImps=[];
+    freshPool=filledSlots.slice();
+  }
+  // Avoid back-to-back same imposter
+  var noRepeat=freshPool.filter(function(i){return i!==lastImp;});
+  var finalPool=noRepeat.length>=1?noRepeat:freshPool;
+  finalPool.sort(function(){return Math.random()-.5;});
+  if(cfg.dbl&&filledSlots.length>=5){
+    impIdxs=[finalPool[0],finalPool[1]||freshPool[0]];
+  } else {
+    impIdxs=[finalPool[0]];
+  }
+  var newUsedImps=usedImps.concat(impIdxs);
 
   // pick clue type
   var clueType="director";
@@ -4709,6 +4756,8 @@ function hostStartGame(){
     resolvedClueValue:resolvedClue.value,
     firstIdx:firstIdx,
     usedRounds:usedNew,
+    usedImps:newUsedImps,
+    lastImp:impIdxs[0],
     votes:{},
     guesses:{},
     nextRoundVotes:{},
@@ -5564,12 +5613,40 @@ function hostNextRound(){
   if(!picked) return;
   var gi=picked.gi, round=picked.round;
 
+  // Build filled slots list (matches ONLINE.myIdx)
   var players=data.players||[];
-  var impIdxs=[];
-  var pool=[];for(var i=0;i<players.length;i++)pool.push(i);
-  pool.sort(function(){return Math.random()-.5;});
-  impIdxs=[pool[0]];
+  var filledSlots=[];
+  for(var i=0;i<players.length;i++){
+    if(players[i]&&players[i].trim()) filledSlots.push(i);
+  }
 
+  // ── ROUND-ROBIN IMPOSTER SELECTION ──────────────────────
+  // Read history from Firebase so every round is fair
+  var usedImps=data.usedImps||[];
+  var lastImp=data.lastImp!=null?data.lastImp:-1;
+
+  // Fresh pool: players not yet been imposter this cycle
+  var freshPool=filledSlots.filter(function(i){return usedImps.indexOf(i)<0;});
+  if(!freshPool.length){
+    // Everyone has had a turn — restart cycle
+    usedImps=[];
+    freshPool=filledSlots.slice();
+  }
+
+  // Remove last imposter to prevent back-to-back (unless no choice)
+  var noRepeat=freshPool.filter(function(i){return i!==lastImp;});
+  var finalPool=noRepeat.length>=1?noRepeat:freshPool;
+  finalPool.sort(function(){return Math.random()-.5;});
+
+  var impIdxs=[];
+  if(cfg.dbl&&filledSlots.length>=5){
+    impIdxs=[finalPool[0], finalPool[1]!==undefined?finalPool[1]:freshPool[0]];
+  } else {
+    impIdxs=[finalPool[0]];
+  }
+  var newUsedImps=usedImps.concat(impIdxs);
+
+  // ── CLUE ────────────────────────────────────────────────
   var clueType="director";
   if((cfg.diff==="medium"||!cfg.diff)&&round.l==="Tamil"){
     var opts=["director"];
@@ -5580,16 +5657,21 @@ function hostNextRound(){
   }
   var resolvedClue=_resolveClue(round,clueType);
 
+  // ── ROLES — keyed by name, idx = full array slot ────────
   var roles={};
   for(var i=0;i<players.length;i++){
+    if(!players[i]||!players[i].trim()) continue;
     roles[sanitizeKey(players[i])]={isImp:impIdxs.indexOf(i)>=0,idx:i};
   }
 
-  var firstIdx=Math.floor(Math.random()*players.length);
+  // First speaker from filled slots only
+  var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
   var spinnerSeed=Math.floor(Math.random()*100000);
+
   ONLINE.roomRef.update({
     phase:"spinner",
     spinnerSeed:spinnerSeed,
+    players:players,
     roundNum:nextRound,
     discussRound:1,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
@@ -5602,6 +5684,8 @@ function hostNextRound(){
     resolvedClueValue:resolvedClue.value,
     firstIdx:firstIdx,
     usedRounds:used.concat([gi]),
+    usedImps:newUsedImps,
+    lastImp:impIdxs[0],
     votes:{},
     guesses:{},
     result:null,
@@ -5722,8 +5806,8 @@ function hostNewGame(){
   // New players can join the lobby before host starts next game
   ONLINE.roomRef.update({
     phase:"lobby",
-    players:players,          // keep everyone
-    joined:data.joined||{},   // keep joined map
+    players:players,
+    joined:data.joined||{},
     round:null,
     roles:null,
     votes:null,
@@ -5731,11 +5815,13 @@ function hostNewGame(){
     roundHistory:[],
     usedRounds:[],
     roundNum:1,
-    scores:{},                // reset scores for new game
+    scores:{},
     nextRoundVotes:{},
     discussRound:1,
     impIdxs:null,
-    cfg:cfg                   // keep same settings
+    usedImps:[],      // reset imposter rotation for new game
+    lastImp:-1,
+    cfg:cfg
   });
 }
 
