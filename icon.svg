@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E91E63"/>
+      <stop offset="100%" stop-color="#6A1B9A"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <!-- Subtle inner glow -->
+  <rect width="512" height="512" rx="80" fill="rgba(255,255,255,0.05)"/>
+  <!-- Spy emoji rendered as text -->
+  <text x="256" y="320" font-size="260" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">🕵️</text>
+  <!-- App name -->
+  <text x="256" y="430" font-size="52" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" fill="white" letter-spacing="3" opacity="0.95">IMPOSTER</text>
+  <text x="256" y="480" font-size="28" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" fill="rgba(255,255,255,0.75)" letter-spacing="2">INDIA</text>
+</svg>

@@ -8,13 +8,15 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Imposter">
-<meta name="description" content="Imposter – India Edition. Tamil movies party game for friends.">
+<meta name="apple-mobile-web-app-title" content="Imposter India">
+<meta name="description" content="The ultimate Indian movie bluffing party game. Tamil, Hindi, Telugu movies. Play offline or online with friends!">
+<meta name="keywords" content="Tamil movie game, party game, imposter, bluffing, Kollywood, India">
 
-<!-- PWA Manifest — inline as data URI so the single HTML file is self-contained -->
-<link rel="manifest" id="pwaManifest">
-<!-- Apple touch icons generated inline via JS below -->
-<link rel="apple-touch-icon" id="appleTouchIcon">
+<!-- PWA Manifest — external file for PWABuilder compatibility -->
+<link rel="manifest" href="manifest.json">
+<!-- Apple touch icon -->
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <script>
 // Safe stub — replaced if Firebase loads successfully
 var DB = {
@@ -1739,115 +1741,51 @@ var ROUNDS=[
   {c:"Movie",l:"Tamil",n:"Koozhangal",d:"P.S. Vinothraj",y:"2021",g:"A minimalist drama about a father and son walking through a drought-hit landscape",hero:"Karuththadaiyaan",heroine:"None",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Anbirkiniyal",d:"Sarjun KM",y:"2021",g:"A thriller about a woman who discovers her husband has a dark past",hero:"Jai",heroine:"Lijomol Jose",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Vendhu Thanindhathu Kaadu",d:"Gautham Menon",y:"2022",g:"A gripping story about a young man's violent rise in the Mumbai underworld",hero:"Silambarasan",heroine:"Siddhi Idnani",comedian:"None"},
-  // ── COMMON LOCATIONS (Spyfall-style — imposter gets a role, not the place name) ──
+    // ── COMMON LOCATIONS (Spyfall-style) ─────────────────────
+  // n=place, d=role given to crewmates, g=description for discussion
   {c:"Location",l:"Location",n:"School",d:"Student",g:"A place where children learn subjects, write exams and play during recess"},
-  {c:"Location",l:"Location",n:"Hospital",d:"Nurse",g:"A place where sick people are treated, doctors examine patients and surgeries are performed"},
-  {c:"Location",l:"Location",n:"Airport",d:"Passenger",g:"A place where aeroplanes land and take off, people check in luggage and wait in departure lounges"},
-  {c:"Location",l:"Location",n:"Railway Station",d:"Commuter",g:"A busy transit hub where trains arrive and depart, people buy tickets and wait on crowded platforms"},
-  {c:"Location",l:"Location",n:"Bank",d:"Security Guard",g:"A place where people deposit money, open accounts, use ATMs and take loans from tellers"},
-  {c:"Location",l:"Location",n:"Police Station",d:"Constable",g:"A place where crimes are reported, FIRs are filed and suspects are held in lock-up"},
+  {c:"Location",l:"Location",n:"Hospital",d:"Nurse",g:"A place where sick people are treated, doctors examine patients and surgeries happen"},
+  {c:"Location",l:"Location",n:"Airport",d:"Passenger",g:"A place where aeroplanes take off, people check in luggage and wait in lounges"},
+  {c:"Location",l:"Location",n:"Railway Station",d:"Commuter",g:"A busy hub where trains arrive and depart, people buy tickets and wait on crowded platforms"},
+  {c:"Location",l:"Location",n:"Bank",d:"Security Guard",g:"A place where people deposit money, open accounts and take loans from tellers"},
+  {c:"Location",l:"Location",n:"Police Station",d:"Constable",g:"A place where crimes are reported, FIRs are filed and suspects are kept in lock-up"},
   {c:"Location",l:"Location",n:"Cinema Theatre",d:"Ticket Seller",g:"A dark hall where movies play on a big screen while people eat popcorn and react loudly"},
-  {c:"Location",l:"Location",n:"Restaurant",d:"Waiter",g:"A place where people order food from a menu, chefs cook in the kitchen and bills arrive at the end"},
-  {c:"Location",l:"Location",n:"Supermarket",d:"Cashier",g:"A large store where people fill trolleys with groceries, browse aisles and pay at checkout"},
-  {c:"Location",l:"Location",n:"Hotel",d:"Receptionist",g:"A place where travellers check in, sleep in air-conditioned rooms and enjoy breakfast buffets"},
+  {c:"Location",l:"Location",n:"Restaurant",d:"Waiter",g:"A place where people order food from a menu, chefs cook and bills are paid at the end"},
+  {c:"Location",l:"Location",n:"Supermarket",d:"Cashier",g:"A large store where people fill trolleys with groceries and pay at checkout counters"},
+  {c:"Location",l:"Location",n:"Hotel",d:"Receptionist",g:"A place where travellers check in, sleep in rooms, order room service and check out"},
   {c:"Location",l:"Location",n:"Gym",d:"Personal Trainer",g:"A place full of equipment where people lift weights, run on treadmills and sweat for fitness"},
   {c:"Location",l:"Location",n:"Library",d:"Librarian",g:"A quiet place with shelves of books where people read, borrow titles and must stay silent"},
-  {c:"Location",l:"Location",n:"Wedding Hall",d:"Caterer",g:"A decorated venue where brides and grooms get married while guests eat biryani and dance"},
+  {c:"Location",l:"Location",n:"Wedding Hall",d:"Caterer",g:"A decorated venue where brides and grooms get married while guests eat and dance"},
   {c:"Location",l:"Location",n:"Temple",d:"Priest",g:"A holy place where devotees pray, offer flowers, ring bells and receive prasadam"},
-  {c:"Location",l:"Location",n:"Bus Stand",d:"Conductor",g:"A noisy place where buses arrive and leave constantly and vendors sell snacks through windows"},
-  {c:"Location",l:"Location",n:"Office",d:"Peon",g:"A place with desks, computers and endless meetings where employees work under tight deadlines"},
-  {c:"Location",l:"Location",n:"Court",d:"Lawyer",g:"A formal hall where judges hear arguments, lawyers cross-examine and verdicts are announced"},
+  {c:"Location",l:"Location",n:"Bus Stand",d:"Conductor",g:"A noisy place where buses arrive and leave constantly, vendors sell snacks through windows"},
+  {c:"Location",l:"Location",n:"Office",d:"Peon",g:"A place with desks, computers and meetings where employees work under deadlines"},
+  {c:"Location",l:"Location",n:"Court",d:"Lawyer",g:"A formal hall where judges hear cases, lawyers argue and verdicts are announced"},
   {c:"Location",l:"Location",n:"Market / Bazaar",d:"Vegetable Vendor",g:"A crowded place where vegetables, clothes and goods are sold by hard bargaining"},
   {c:"Location",l:"Location",n:"Graveyard",d:"Gravedigger",g:"A silent ground with tombstones where the dead are buried and families come to grieve"},
-  {c:"Location",l:"Location",n:"Beach",d:"Lifeguard",g:"A sandy shore where waves crash, children build sandcastles and fishermen cast their nets"},
-  {c:"Location",l:"Location",n:"Zoo",d:"Zookeeper",g:"An enclosed park where wild animals are kept in habitats for visitors to watch and photograph"},
-  {c:"Location",l:"Location",n:"Submarine",d:"Navigator",g:"An underwater military vessel that dives deep, fires torpedoes and operates in total secrecy"},
-  {c:"Location",l:"Location",n:"Space Station",d:"Astronaut",g:"A floating laboratory orbiting Earth where scientists live in zero gravity for months"},
-  {c:"Location",l:"Location",n:"Casino",d:"Dealer",g:"A glamorous hall where people gamble at card tables, spin roulette and win or lose fortunes"},
-  {c:"Location",l:"Location",n:"Prison",d:"Prisoner",g:"A locked facility where convicted criminals serve sentences under heavy guard and strict rules"},
-  {c:"Location",l:"Location",n:"Construction Site",d:"Labourer",g:"A noisy site with cranes, cement mixers and hard-hat workers building a structure from scratch"},
-  {c:"Location",l:"Location",n:"Petrol Bunk",d:"Fuel Attendant",g:"A roadside station where vehicles stop to fill petrol or diesel and sometimes check tyre air"},
-  {c:"Location",l:"Location",n:"Salon / Barber Shop",d:"Barber",g:"A place where people get haircuts, shaves, facials and sit under capes staring at the mirror"},
-  {c:"Location",l:"Location",n:"Pharmacy",d:"Pharmacist",g:"A shop where people buy prescription medicines, vitamins and ask about side effects"},
-  {c:"Location",l:"Location",n:"Fire Station",d:"Firefighter",g:"A station where red engines are parked, brave firefighters train and rush out at alarm bells"},
-  {c:"Location",l:"Location",n:"Military Base",d:"Soldier",g:"A secured area where troops train in formation, weapons are stored and strict discipline rules"},
-  {c:"Location",l:"Location",n:"Amusement Park",d:"Ride Operator",g:"A fun park with roller coasters, giant wheels and stalls where people scream and win toys"},
-  {c:"Location",l:"Location",n:"Circus",d:"Clown",g:"A big tent where acrobats balance on wires, lions jump through hoops and the crowd cheers"},
-  {c:"Location",l:"Location",n:"Science Lab",d:"Scientist",g:"A room full of test tubes, chemicals and microscopes where experiments and discoveries happen"},
-  {c:"Location",l:"Location",n:"Farm",d:"Farmer",g:"Open land where crops are grown, cows are milked at dawn and tractors plough the soil"},
-  {c:"Location",l:"Location",n:"Pirate Ship",d:"Pirate",g:"A wooden sailing ship flying a skull flag raiding other vessels for treasure on the high seas"},
-  {c:"Location",l:"Location",n:"Haunted House",d:"Ghost",g:"A creaky old house where lights flicker, doors slam on their own and eerie sounds echo at night"},
-  {c:"Location",l:"Location",n:"Cruise Ship",d:"Captain",g:"A massive floating hotel sailing the ocean with restaurants, pools, casinos and live entertainment"},
-  {c:"Location",l:"Location",n:"Cricket Stadium",d:"Groundsman",g:"A massive arena with thousands of fans cheering boundaries and wickets in a tense match"},
-  {c:"Location",l:"Location",n:"TV Studio",d:"Camera Operator",g:"A brightly lit set where anchors present news, actors film shows and directors shout action"},
-  {c:"Location",l:"Location",n:"Mountain Trek",d:"Trekker",g:"A steep forest trail through rocks and mist where hikers carry backpacks and camp overnight"},
-  {c:"Location",l:"Location",n:"Bank Robbery",d:"Robber",g:"A tense situation where masked criminals hold hostages, demand cash and threaten everyone"},
-  {c:"Location",l:"Location",n:"Kindergarten",d:"Teacher",g:"A colourful classroom for tiny children who sing rhymes, paint pictures and learn the alphabet"},
+  {c:"Location",l:"Location",n:"Beach",d:"Lifeguard",g:"A sandy shore where waves crash, children build sandcastles and vendors sell snacks"},
+  {c:"Location",l:"Location",n:"Zoo",d:"Zookeeper",g:"An enclosed park where wild animals live in enclosures for visitors to watch"},
+  {c:"Location",l:"Location",n:"Casino",d:"Dealer",g:"A glamorous hall where people gamble at card tables, spin roulette and win or lose money"},
+  {c:"Location",l:"Location",n:"Prison",d:"Prisoner",g:"A locked facility where convicted criminals serve sentences under heavy guard"},
+  {c:"Location",l:"Location",n:"Construction Site",d:"Labourer",g:"A noisy site with cranes, cement mixers and workers building a structure from scratch"},
+  {c:"Location",l:"Location",n:"Petrol Bunk",d:"Fuel Attendant",g:"A roadside station where vehicles stop to fill petrol or diesel and check tyre air"},
+  {c:"Location",l:"Location",n:"Salon / Barber Shop",d:"Barber",g:"A place where people get haircuts, shaves and beauty treatments sitting under capes"},
+  {c:"Location",l:"Location",n:"Pharmacy",d:"Pharmacist",g:"A shop where people buy medicines on prescription, vitamins and health products"},
+  {c:"Location",l:"Location",n:"Fire Station",d:"Firefighter",g:"A station where fire engines wait and brave firefighters rush out at alarm bells"},
+  {c:"Location",l:"Location",n:"Military Base",d:"Soldier",g:"A secured area where troops train, weapons are stored and strict discipline is followed"},
+  {c:"Location",l:"Location",n:"Amusement Park",d:"Ride Operator",g:"A fun park with roller coasters, giant wheels and stalls where people scream with joy"},
+  {c:"Location",l:"Location",n:"Science Lab",d:"Scientist",g:"A room with test tubes, chemicals and microscopes where experiments happen"},
+  {c:"Location",l:"Location",n:"Farm",d:"Farmer",g:"Open land where crops are grown, cows are milked and tractors plough the soil"},
+  {c:"Location",l:"Location",n:"Cruise Ship",d:"Captain",g:"A massive floating hotel on the ocean with restaurants, pools and entertainment"},
+  {c:"Location",l:"Location",n:"Cricket Stadium",d:"Groundsman",g:"A massive arena where thousands of fans cheer boundaries and wickets in big matches"},
+  {c:"Location",l:"Location",n:"TV Studio",d:"Camera Operator",g:"A brightly lit set where anchors present shows and directors shout action"},
   {c:"Location",l:"Location",n:"Night Club",d:"DJ",g:"A loud dark hall with neon lights, thumping bass music and people dancing until dawn"},
-  {c:"Location",l:"Location",n:"Oil Rig",d:"Driller",g:"A massive offshore platform in the middle of the sea where workers drill into the seabed for crude oil"},
-  {c:"Location",l:"Location",n:"Spy Headquarters",d:"Spy",g:"A secret underground facility with screens, disguises and top-secret mission briefings"},
-  {c:"Location",l:"Location",n:"Orphanage",d:"Caretaker",g:"A home for children without parents where they eat together, study and sleep in shared rooms"},
-  {c:"Location",l:"Location",n:"Fishing Boat",d:"Fisherman",g:"A small boat that sets out before dawn, casts wide nets and returns with the day's fish catch"},
-  {c:"Location",l:"Location",n:"Refugee Camp",d:"Aid Worker",g:"A temporary settlement of tents where displaced families live and wait for help to arrive"},
-  {c:"Location",l:"Location",n:"Post Office",d:"Postman",g:"A government office where people send parcels, pay bills and collect registered letters"},
-  {c:"Location",l:"Location",n:"Ambulance",d:"Paramedic",g:"A rushing emergency vehicle with sirens blaring, carrying a patient and medical equipment"},
-  {c:"Location",l:"Location",n:"Courtroom",d:"Judge",g:"A formal legal space where evidence is presented, witnesses are questioned and justice is delivered"},
-  {c:"Location",l:"Location",n:"Dentist Clinic",d:"Dentist",g:"A place with reclining chairs, bright lights and drilling sounds where people dread getting fillings"},
-  {c:"Location",l:"Location",n:"Classroom Exam",d:"Invigilator",g:"A silent room with rows of desks where students write answers under strict time pressure"},
-  {c:"Location",l:"Location",n:"Haunted Forest",d:"Lost Hiker",g:"A dark dense forest where strange sounds come from everywhere and no one can find the way out"},
+  {c:"Location",l:"Location",n:"Post Office",d:"Postman",g:"A government office where people send parcels, pay bills and collect letters"},
+  {c:"Location",l:"Location",n:"Ambulance",d:"Paramedic",g:"A rushing emergency vehicle with sirens blaring, carrying a patient and equipment"},
+  {c:"Location",l:"Location",n:"Courtroom",d:"Judge",g:"A formal space where evidence is presented, witnesses are questioned and justice is delivered"},
+  {c:"Location",l:"Location",n:"Dentist Clinic",d:"Dentist",g:"A place with reclining chairs and drilling sounds where people dread getting fillings"},
+  {c:"Location",l:"Location",n:"Kindergarten",d:"Teacher",g:"A colourful classroom for tiny children who sing rhymes, paint pictures and learn alphabets"},
 
-
-  // ── CLASSICS (pre-1990) ──────────────────────────────────
-  {c:"Movie",l:"Tamil",n:"Thiruvilaiyadal",d:"A. P. Nagarajan",y:"1965",g:"Lord Shiva descends to earth to help a humble poet win a contest",hero:"Sivaji Ganesan",heroine:"K. R. Vijaya",comedian:"Nagesh"},
-  {c:"Movie",l:"Tamil",n:"Enga Veettu Pillai",d:"B. R. Panthulu",y:"1965",g:"A brave village headman fights local injustice and corruption",hero:"M. G. Ramachandran",heroine:"Jayalalithaa",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Aayirathil Oruvan",d:"B. R. Panthulu",y:"1965",g:"An adventure film where a hero battles villains to save his kingdom",hero:"M. G. Ramachandran",heroine:"Jayalalithaa",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Pasa Malar",d:"A. Bhimsingh",y:"1961",g:"An emotional story about the inseparable bond between siblings",hero:"Gemini Ganesan",heroine:"Savitri",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Kudiyiruntha Koil",d:"A. P. Nagarajan",y:"1969",g:"A devotional drama about faith sacrifice and divine justice",hero:"Sivaji Ganesan",heroine:"Vanisri",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ninaithale Inikkum",d:"K. Balachander",y:"1979",g:"A romantic drama about a musician and his complex love life",hero:"Kamal Haasan",heroine:"Jayapradha",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Moonram Pirai",d:"Balu Mahendra",y:"1982",g:"A sensitive love story about a teacher who cares for a woman with amnesia",hero:"Kamal Haasan",heroine:"Sridevi",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Uthiripookkal",d:"Mahendran",y:"1979",g:"A realistic drama about college life friendship and tragedy",hero:"Rajinikanth",heroine:"Sridevi",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Alaigal Oivathillai",d:"K. Balachander",y:"1981",g:"A love triangle set against the backdrop of a coastal town",hero:"Kamal Haasan",heroine:"Radhika",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ninaive Oru Sangeetham",d:"K. Balachander",y:"1984",g:"A musical drama about a composer's journey through love and loss",hero:"Kamal Haasan",heroine:"Suhasini",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Naan Aanaiyittal",d:"A. Bhimsingh",y:"1961",g:"A drama about a man's promise and sacrifice for his family",hero:"Sivaji Ganesan",heroine:"Savitri",comedian:"None"},
-
-  // ── 90s & 2000s ──────────────────────────────────────────
-  {c:"Movie",l:"Tamil",n:"Gentleman",d:"Shankar",y:"1993",g:"A poor man transforms into a sophisticated thief to fund the poor in his village",hero:"Arjun Sarja",heroine:"Madhu Bala",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Kadhalan",d:"Shankar",y:"1994",g:"A carefree young man falls for a minister's daughter in this masala entertainer",hero:"Prabhu Deva",heroine:"Nagma",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Jeans",d:"Shankar",y:"1998",g:"Twin brothers compete for the same girl in this glossy globe-trotting romance",hero:"Prashanth",heroine:"Aishwarya Rai",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Minnale",d:"Gautham Menon",y:"2001",g:"A romantic drama about a man who impersonates another to win a girl's heart",hero:"R. Madhavan",heroine:"Reema Sen",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Kandukondain Kandukondain",d:"Rajiv Menon",y:"2000",g:"A Jane Austen-inspired romantic drama about two sisters seeking love and independence",hero:"Ajith Kumar",heroine:"Tabu",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Rhythm",d:"Vasanth",y:"2000",g:"A musician coping with his wife's death discovers a second chance at love",hero:"Arjun Sarja",heroine:"Jyothika",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"12B",d:"Jeeva",y:"2001",g:"Two parallel lives unfold based on whether a man catches a bus or misses it",hero:"Shaam",heroine:"Jyothika",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Anbe Sivam",d:"Sundar C",y:"2003",g:"Two strangers with opposite personalities journey together and discover humanity",hero:"Kamal Haasan",heroine:"Madhavan",comedian:"Kamal Haasan"},
-  {c:"Movie",l:"Tamil",n:"Autograph",d:"Cheran",y:"2004",g:"A man revisits his past loves and friendships before his wedding day",hero:"None",heroine:"Sneha",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ullam Ketkumae",d:"Jeeva",y:"2005",g:"Four friends navigate career and love in this contemporary urban drama",hero:"Shaam",heroine:"Laila",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Sillunu Oru Kaadhal",d:"N. Rajasekar",y:"2006",g:"A married couple's love is tested when the husband's childhood sweetheart reappears",hero:"Suriya",heroine:"Jyothika",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Dasavathaaram",d:"K. S. Ravikumar",y:"2008",g:"Kamal plays ten different roles across centuries in this ambitious action epic",hero:"Kamal Haasan",heroine:"Asin",comedian:"Kamal Haasan"},
-
-  // ── 2010s & 2020s ────────────────────────────────────────
-  {c:"Movie",l:"Tamil",n:"Siruthai",d:"Siva",y:"2011",g:"A cop discovers his look-alike has been wreaking havoc and must stop him",hero:"Karthi",heroine:"Tamannaah",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Attakathi",d:"Pa. Ranjith",y:"2012",g:"A carefree young man falls for a girl in his neighbourhood in this slice-of-life drama",hero:"Dinesh",heroine:"Nandita",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Kaaviya Thalaivan",d:"Vasantha Balan",y:"2014",g:"Two stage actors become rivals as one rises to fame and the other is forgotten",hero:"Silambarasan",heroine:"Priya Anand",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Demonte Colony",d:"R. Ajay Gnanamuthu",y:"2015",g:"Four friends enter an infamous haunted colony and face supernatural terror",hero:"Arulnithi",heroine:"Ramona Vijay",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Joker",d:"Raju Murugan",y:"2016",g:"A village fool uses guerrilla tactics to fight for his people's basic rights",hero:"Guru Somasundaram",heroine:"Ramya Nambeesan",comedian:"Guru Somasundaram"},
-  {c:"Movie",l:"Tamil",n:"Rekka",d:"Rathina Shiva",y:"2016",g:"A hot-headed young man's feud with a small-town bully escalates into chaos",hero:"Vijay Sethupathi",heroine:"Lakshmi Menon",comedian:"Vijay Sethupathi"},
-  {c:"Movie",l:"Tamil",n:"Iraivi",d:"Karthik Subbaraj",y:"2016",g:"Three women silently suffer while three men in their lives chase reckless dreams",hero:"Vijay Sethupathi",heroine:"Anjali",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Pa Paandi",d:"Dhanush",y:"2017",g:"An ageing stuntman embarks on a road trip and rediscovers his lost love",hero:"Rajkiran",heroine:"Revathi",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Tik Tik Tik",d:"Shakti Soundar Rajan",y:"2018",g:"India's first space thriller about a team stopping an asteroid headed for Chennai",hero:"Jayam Ravi",heroine:"Nivetha Pethuraj",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Chekka Chivantha Vaanam",d:"Mani Ratnam",y:"2018",g:"Three sons fight for control of their dying crime lord father's empire",hero:"Arvind Swamy",heroine:"Aishwarya Rajesh",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Imaikkaa Nodigal",d:"R. Ajay Gnanamuthu",y:"2018",g:"A CBI officer faces her most personal case when a serial killer targets her family",hero:"Atharva",heroine:"Nayanthara",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ratsasan",d:"Ram Kumar",y:"2018",g:"An aspiring filmmaker becomes a cop and hunts a school-girl serial killer",hero:"Vishnu Vishal",heroine:"Amala Paul",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Thadam",d:"Magizh Thirumeni",y:"2019",g:"A detective must determine which of two identical-looking men committed a murder",hero:"Arun Vijay",heroine:"Tanya Hope",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Magamuni",d:"Santha Kumar",y:"2019",g:"Twin brothers with opposite personalities are entangled in a murder mystery",hero:"Arya",heroine:"Mahima Nambiar",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ennai Nokki Paayum Thota",d:"Gautham Menon",y:"2019",g:"A love story set against a backdrop of gang warfare in contemporary Chennai",hero:"Dhanush",heroine:"Megha Akash",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Kannum Kannum Kollaiyadithaal",d:"Desingh Periyasamy",y:"2020",g:"Two charming con men fall for the wrong girls in this slick crime comedy",hero:"Dulquer Salmaan",heroine:"Ritu Varma",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Oh My Kadavule",d:"Ashwath Marimuthu",y:"2020",g:"A man is granted a chance to relive his past and reconsider his marriage choices",hero:"Ashok Selvan",heroine:"Ritika Singh",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Nenjam Marappathillai",d:"Selvaraghavan",y:"2021",g:"A horror thriller where a man is haunted by a murdered woman seeking vengeance",hero:"S. J. Suryah",heroine:"Regina Cassandra",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Mahaan",d:"Karthik Subbaraj",y:"2022",g:"A strict teetotaller walks away from his family and becomes an alcohol tycoon",hero:"Vikram",heroine:"Simran",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ponniyin Selvan I",d:"Mani Ratnam",y:"2022",g:"A young warrior navigates political intrigue in the Chola empire to protect the throne",hero:"Jayam Ravi",heroine:"Trisha",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Ponniyin Selvan II",d:"Mani Ratnam",y:"2023",g:"The Chola succession war reaches its climax in this lavish historical epic",hero:"Vikram",heroine:"Aishwarya Rai",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Maaran",d:"Karthick Naren",y:"2022",g:"An investigative journalist uncovers a political conspiracy that puts his life at risk",hero:"Dhanush",heroine:"Malavika Mohanan",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Thiruchitrambalam",d:"Mithran Jawahar",y:"2022",g:"A delivery boy rediscovers love and family bonds in his carefree neighbourhood",hero:"Dhanush",heroine:"Nithya Menen",comedian:"None"},
+  // ── CUSTOM MOVIES ────────────────────────────────────────eroine:"Nithya Menen",comedian:"None"},
 ];
 // ── CUSTOM MOVIES ────────────────────────────────────────
 var CUSTOM_MOVIES=[];
@@ -3694,20 +3632,34 @@ function drawLeaderboard(){
 // ── CLUE RESOLVER — single source of truth ───────────────
 // Returns {label, value} for the imposter's clue, guaranteed non-null/non-"None"
 // ── LOCATION LIST — shown to everyone so imposter can guess ─
-function buildLocationListHTML(currentLocation, showCurrent){
-  // Get all location names from ROUNDS
-  var allLocs=[];
-  for(var i=0;i<ROUNDS.length;i++){
-    if(ROUNDS[i].c==="Location") allLocs.push(ROUNDS[i].n);
+function buildLocationListHTML(currentLocation, showCurrent, presetList){
+  // presetList: array of 15 names to show (same set for imposter and crewmates)
+  // If not provided, generate randomly (online uses presetList from Firebase)
+  var displayLocs;
+
+  if(presetList&&presetList.length){
+    displayLocs=presetList.slice().sort();
+  } else if(G&&G.locList&&G.locList.length){
+    // Offline — use the list generated at round start
+    displayLocs=G.locList.slice(); // already sorted
+  } else {
+    // Fallback: generate on the fly
+    var allLocs=[];
+    for(var i=0;i<ROUNDS.length;i++){
+      if(ROUNDS[i].c==="Location") allLocs.push(ROUNDS[i].n);
+    }
+    if(currentLocation&&allLocs.indexOf(currentLocation)<0) allLocs.push(currentLocation);
+    var decoys=allLocs.filter(function(n){return n!==currentLocation;});
+    decoys.sort(function(){return Math.random()-.5;});
+    displayLocs=(currentLocation?[currentLocation]:decoys.slice(0,1)).concat(decoys.slice(0,14)).sort();
   }
-  // Also include custom cat locations if any
-  allLocs.sort();
+
   var html='<div class="loc-list-wrap">';
-  html+='<div class="loc-list-header">📍 POSSIBLE LOCATIONS ('+(showCurrent?"YOURS IS HIGHLIGHTED":"FIND YOURS")+') — '+allLocs.length+' total</div>';
+  html+='<div class="loc-list-header">📍 POSSIBLE LOCATIONS ('+(showCurrent?'YOURS IS HIGHLIGHTED':'GUESS FROM THESE')+')</div>';
   html+='<div class="loc-list-grid">';
-  for(var i=0;i<allLocs.length;i++){
-    var isCurrent=showCurrent&&allLocs[i]===currentLocation;
-    html+='<span class="loc-chip'+(isCurrent?" current":"")+'">'+h(allLocs[i])+'</span>';
+  for(var i=0;i<displayLocs.length;i++){
+    var isCurrent=showCurrent&&displayLocs[i]===currentLocation;
+    html+='<span class="loc-chip'+(isCurrent?" current":"")+'">'+h(displayLocs[i])+'</span>';
   }
   html+='</div></div>';
   return html;
@@ -3886,6 +3838,19 @@ function pickRound(names,cfg,usedList){
   }
   // Store the resolved clue label+value so no fallback logic needed at display time
   G.resolvedClue=_resolveClue(r2, G.clueType);
+
+  // For Location rounds — pre-generate the 15-location list so all players see same set
+  if(r2.c==="Location"){
+    var allLocNames=[];
+    for(var li=0;li<ALL_POOL.length;li++){
+      if(ALL_POOL[li].c==="Location") allLocNames.push(ALL_POOL[li].n);
+    }
+    var decoys=allLocNames.filter(function(n){return n!==r2.n;});
+    decoys.sort(function(){return Math.random()-.5;});
+    G.locList=[r2.n].concat(decoys.slice(0,14)).sort();
+  } else {
+    G.locList=null;
+  }
 }
 
 function startGame(){
@@ -4863,6 +4828,17 @@ function _onlinePick(cfg, used){
   return {gi:gi, round:allPool[gi]};
 }
 
+// Generate 15-location list for a location round (actual + 14 decoys), sorted
+function _genLocList(roundName){
+  var allLocNames=[];
+  for(var i=0;i<ROUNDS.length;i++){
+    if(ROUNDS[i].c==="Location") allLocNames.push(ROUNDS[i].n);
+  }
+  var decoys=allLocNames.filter(function(n){return n!==roundName;});
+  decoys.sort(function(){return Math.random()-.5;});
+  return [roundName].concat(decoys.slice(0,14)).sort();
+}
+
 function hostStartGame(){
   var data=ONLINE.gameState;
   if(!data)return;
@@ -4928,6 +4904,7 @@ function hostStartGame(){
   var usedNew=used.concat([gi]);
   var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
   var spinnerSeed=Math.floor(Math.random()*100000);
+  var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
     phase:"spinner",
     spinnerSeed:spinnerSeed,
@@ -4940,6 +4917,7 @@ function hostStartGame(){
     clueType:clueType,
     resolvedClueLabel:resolvedClue.label,
     resolvedClueValue:resolvedClue.value,
+    locList:locList,
     firstIdx:firstIdx,
     usedRounds:usedNew,
     usedImps:newUsedImps,
@@ -5102,7 +5080,7 @@ function showMyRole(data){
       html+="<p class='ceye' style='color:#e74c3c'>📍 LOCATION MODE</p>";
       html+="<p style='font-size:.8rem;color:var(--text2);line-height:1.6;margin-top:6px'>Everyone knows the location and their role.<br><strong>You don't know where you are!</strong><br><br>Use the list below — ask questions and figure it out!</p>";
       html+="<p class='cnote' style='margin-top:10px'>Don't reveal you're the imposter!</p></div>";
-      html+=buildLocationListHTML("", false); // no highlight — imposter doesn't know which
+      html+=buildLocationListHTML("", false, data.locList); // imposter sees preset 15 list, no highlight
     } else {
       html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
       html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(isFood?"Indian Food":round.l+" Movie")+"</span></div>";
@@ -5134,7 +5112,7 @@ function showMyRole(data){
       html+="<div class='crow2' style='margin-top:6px;background:"+meta.col+"22;border-radius:8px;padding:6px 10px'>";
       html+="<span class='ck'>Your role</span><span class='cv' style='color:"+meta.col+";font-weight:700'>"+h(round.d)+"</span></div>";
       html+="</div>";
-      html+=buildLocationListHTML(round.n, true); // crewmate sees list with current highlighted
+      html+=buildLocationListHTML(round.n, true, data.locList); // crewmate sees same 15 list with current highlighted
       html+="<div class='phint'><p class='phtxt'>Your location is highlighted green. Ask questions — find who doesn't belong!</p></div>";
     } else {
       html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
@@ -5312,7 +5290,7 @@ function drawOnlineDiscuss(data){
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
   html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
   html+="<p class='rule'>"+(round.c==="Location"?"📍 Location mode · "+onlineClueHint:"🟡 Medium · Imposter clue: "+onlineClueHint)+"</p></div>";
-  if(round.c==="Location") html+=buildLocationListHTML(round.n, true);
+  if(round.c==="Location") html+=buildLocationListHTML(round.n, true, data.locList);
 
   // ── Next Round Vote panel (if not on last round)
   if(canNextRound){
@@ -5453,6 +5431,7 @@ function hostSkipToNextRound(){
   }
   var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
   var spinnerSeed=Math.floor(Math.random()*100000);
+  var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
     phase:"spinner",
     spinnerSeed:spinnerSeed,
@@ -5464,6 +5443,7 @@ function hostSkipToNextRound(){
            comedian:round.comedian||"None"},
     roles:roles,impIdxs:impIdxs,clueType:clueType,
     resolvedClueLabel:resolvedClue.label,resolvedClueValue:resolvedClue.value,
+    locList:locList,
     firstIdx:firstIdx,
     usedRounds:used.concat([gi]),
     votes:{},guesses:{},result:null,nextRoundVotes:{}
@@ -6071,93 +6051,19 @@ loadSavedNames();
   }
 })();
 
-// ── PWA — MANIFEST + SERVICE WORKER + INSTALL BANNER ─────
+// ── PWA — SERVICE WORKER + INSTALL BANNER ─────────────────
 (function(){
-  // 1. Generate an SVG icon as a data URI
-  var svgIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'+
-    '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">'+
-    '<stop offset="0%" stop-color="#E91E63"/><stop offset="100%" stop-color="#9C27B0"/></linearGradient></defs>'+
-    '<rect width="192" height="192" rx="40" fill="url(#g)"/>'+
-    '<text x="96" y="128" font-size="110" text-anchor="middle" font-family="sans-serif">🕵️</text>'+
-    '<text x="96" y="178" font-size="22" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="sans-serif" font-weight="700" letter-spacing="2">IMPOSTER</text>'+
-    '</svg>';
-  var svgUri='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgIcon);
-
-  // Set Apple touch icon
-  var ati=document.getElementById('appleTouchIcon');
-  if(ati) ati.href=svgUri;
-
-  // 2. Build and inject the Web App Manifest as a data URI
-  var manifest={
-    name:'IMPOSTER – India Edition',
-    short_name:'Imposter',
-    description:'Tamil movies party game for friends',
-    start_url:window.location.pathname+window.location.search,
-    display:'standalone',
-    orientation:'portrait',
-    background_color:'#1a0533',
-    theme_color:'#E91E63',
-    icons:[
-      {src:svgUri,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},
-      {src:svgUri,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
-    ]
-  };
-  var manifestEl=document.getElementById('pwaManifest');
-  if(manifestEl){
-    manifestEl.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));
-  }
-
-  // 3. Register a Service Worker via a Blob URL so the single HTML file caches itself
+  // Register external service worker (sw.js must be in same folder on GitHub)
   if('serviceWorker' in navigator){
-    var swCode=[
-      'var CACHE="imposter-v2";',
-      'var PAGE=location.href;',
-      // Install: cache this page
-      'self.addEventListener("install",function(e){',
-      '  e.waitUntil(caches.open(CACHE).then(function(c){',
-      '    return c.addAll([PAGE,"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Noto+Serif+Tamil&display=swap"]);',
-      '  }).catch(function(){}));',
-      '  self.skipWaiting();',
-      '});',
-      // Activate: delete old caches
-      'self.addEventListener("activate",function(e){',
-      '  e.waitUntil(caches.keys().then(function(keys){',
-      '    return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));',
-      '  }));',
-      '  self.clients.claim();',
-      '});',
-      // Fetch: serve from cache, fall back to network, then cache response
-      'self.addEventListener("fetch",function(e){',
-      '  if(e.request.method!=="GET") return;',
-      '  e.respondWith(caches.match(e.request).then(function(cached){',
-      '    if(cached) return cached;',
-      '    return fetch(e.request).then(function(res){',
-      '      if(res&&res.ok){',
-      '        var clone=res.clone();',
-      '        caches.open(CACHE).then(function(c){c.put(e.request,clone);});',
-      '      }',
-      '      return res;',
-      '    }).catch(function(){return cached;});',
-      '  }));',
-      '});'
-    ].join('\n');
-
-    var blob=new Blob([swCode],{type:'application/javascript'});
-    var swUrl=URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl,{scope:'./'})
-      .then(function(reg){
-        // Revoke the blob URL after a short delay (SW is already parsed)
-        setTimeout(function(){URL.revokeObjectURL(swUrl);},3000);
-      })
-      .catch(function(){/* offline install unavailable — silent fail */});
+    navigator.serviceWorker.register('./sw.js', {scope:'./'})
+      .catch(function(){/* silent fail if sw.js not found */});
   }
 
-  // 4. PWA Install Banner — show when browser fires beforeinstallprompt
+  // Install Banner — Android Chrome fires this automatically
   var _deferredPrompt=null;
   window.addEventListener('beforeinstallprompt',function(e){
     e.preventDefault();
     _deferredPrompt=e;
-    // Only show if user hasn't dismissed it before
     try{ if(localStorage.getItem('pwa_dismissed')) return; }catch(ex){}
     showPWABanner();
   });
@@ -6170,7 +6076,7 @@ loadSavedNames();
     banner.innerHTML=
       '<div class="pwa-ico">🕵️</div>'+
       '<div class="pwa-text">'+
-        '<div class="pwa-title">Install Imposter</div>'+
+        '<div class="pwa-title">Install Imposter India</div>'+
         '<div class="pwa-sub">Play offline anytime — add to Home Screen</div>'+
       '</div>'+
       '<button class="pwa-install-btn" onclick="triggerPWAInstall()">INSTALL</button>'+
@@ -6193,7 +6099,7 @@ loadSavedNames();
     try{localStorage.setItem('pwa_dismissed','1');}catch(ex){}
   };
 
-  // iOS Safari doesn't fire beforeinstallprompt — show a manual tip instead
+  // iOS Safari — manual tip
   var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
   var isStandalone=window.navigator.standalone===true;
   if(isIOS&&!isStandalone){
