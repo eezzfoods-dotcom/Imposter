@@ -3576,18 +3576,17 @@ function _resolveClue(round, clueType){
   if(!round) return {label:"Director",value:""};
   var ct=clueType||"director";
   var raw;
-  if(ct==="hero")     raw=round.hero;
+  if(ct==="hero")          raw=round.hero;
   else if(ct==="heroine")  raw=round.heroine;
   else if(ct==="comedian") raw=round.comedian;
-  else                raw=round.d;
+  else                     raw=round.d;
 
-  // Fallback: if the resolved value is missing/None, use director
-  if(!raw||raw==="None"||raw===round.d&&ct!=="director"){
-    // director is always the last resort (it always has a value)
-    if(!raw||raw==="None") return {label:"Director", value:round.d||""};
+  // If value is missing, "None", or same as director — always fall back to director
+  if(!raw || raw==="None" || raw===round.d){
+    return {label:"Director", value:round.d||""};
   }
   var label=ct==="hero"?"Hero":ct==="heroine"?"Heroine":ct==="comedian"?"Comedian":"Director";
-  return {label:label, value:raw||round.d||""};
+  return {label:label, value:raw};
 }
 
 function pickRound(names,cfg,usedList){
@@ -4521,9 +4520,9 @@ function handleRoomUpdate(data){
 }
 
 function drawHostLobby(code, players, data){
-  var filledCount=0;
-  for(var i=0;i<players.length;i++){if(players[i]&&players[i].trim())filledCount++;}
-  var totalSlots=players.length;
+  var filledPlayers=[];
+  for(var i=0;i<players.length;i++){if(players[i]&&players[i].trim())filledPlayers.push(i);}
+  var filledCount=filledPlayers.length;
 
   var html="<div class='page'><div class='card'>";
   html+=film();
@@ -4538,34 +4537,33 @@ function drawHostLobby(code, players, data){
   html+="<p style='color:var(--text3);font-size:.72rem'>Scan QR or enter code &amp; type your name to join</p>";
   html+="</div>";
 
-  html+="<p class='slbl'>PLAYERS ("+filledCount+"/"+totalSlots+" joined)</p>";
+  html+="<p class='slbl' style='margin-top:14px'>PLAYERS ("+filledCount+" joined)</p>";
   html+="<div class='player-list-online'>";
   for(var i=0;i<players.length;i++){
     var filled=players[i]&&players[i].trim();
+    if(!filled) continue; // only show filled slots
     html+="<div class='pol-item'>";
-    html+="<div style='width:28px;height:28px;border-radius:7px;background:"+(filled?COLORS[i]:"#ddd")+";display:flex;align-items:center;justify-content:center;font-size:.9rem'>"+(filled?AVS[i]:"·")+"</div>";
-    if(filled){
-      html+="<span style='flex:1;font-size:.85rem;font-weight:500;color:var(--text)'>"+h(players[i])+"</span>";
-      if(i===0) html+="<span class='pol-host'>&#x1F451; HOST</span>";
-      else html+="<span style='color:#00BFA5;font-size:.72rem;font-weight:700'>&#x2713; JOINED</span>";
+    html+="<div style='width:28px;height:28px;border-radius:7px;background:"+COLORS[i%COLORS.length]+";display:flex;align-items:center;justify-content:center;font-size:.9rem'>"+AVS[i%AVS.length]+"</div>";
+    html+="<span style='flex:1;font-size:.85rem;font-weight:500;color:var(--text)'>"+h(players[i])+"</span>";
+    if(i===0){
+      html+="<span class='pol-host'>&#x1F451; HOST</span>";
     } else {
-      html+="<span style='flex:1;font-size:.85rem;color:var(--text3)'>Slot "+(i+1)+"</span>";
-      html+="<span style='color:var(--text3);font-size:.72rem'>waiting…</span>";
+      html+="<span style='color:#00BFA5;font-size:.72rem;font-weight:700;margin-right:8px'>&#x2713;</span>";
+      html+="<button onclick='hostRemovePlayer("+i+")' style='width:22px;height:22px;border-radius:5px;border:none;background:rgba(255,51,102,.12);color:#e74c3c;font-size:.75rem;cursor:pointer;flex-shrink:0' title='Remove'>✕</button>";
     }
     html+="</div>";
   }
   html+="</div>";
 
   var canStart=filledCount>=3;
-  html+="<button class='sb' "+(canStart?"":"disabled")+" onclick='hostStartGame()'>START GAME &#x1F3AC;</button>";
+  html+="<button class='sb' style='margin-top:14px' "+(canStart?"":"disabled")+" onclick='hostStartGame()'>START GAME &#x1F3AC;</button>";
   if(!canStart){
-    html+="<p style='text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px'>Need at least 3 players to start ("+filledCount+"/"+totalSlots+" joined)</p>";
-  } else if(filledCount<totalSlots){
-    html+="<p style='text-align:center;color:#2ecc71;font-size:.72rem;margin-top:8px'>✓ Can start! ("+filledCount+"/"+totalSlots+" joined) — or wait for more</p>";
+    html+="<p style='text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px'>Need at least 3 players ("+filledCount+" joined)</p>";
+  } else {
+    html+="<p style='text-align:center;color:#2ecc71;font-size:.72rem;margin-top:8px'>&#x2713; Ready to start with "+filledCount+" players</p>";
   }
   html+="</div></div></div>";
   render(html);
-  // Generate QR and show join link (fully offline, no CDN)
   setTimeout(function(){
     var wrap=document.getElementById("qrWrap");
     var linkWrap=document.getElementById("qrLinkWrap");
@@ -4582,6 +4580,12 @@ function drawHostLobby(code, players, data){
       }
     }
   },50);
+}
+
+function hostRemovePlayer(idx){
+  if(!confirm("Remove this player?")) return;
+  ONLINE.roomRef.child("players/"+idx).set("");
+  ONLINE.roomRef.child("scores/"+idx).set(null);
 }
 
 // ── ONLINE ROUND PICKER — mirrors offline pickRound filters ──────────
@@ -4748,34 +4752,38 @@ function doJoin(){
   ONLINE.roomRef.once("value").then(function(snap){
     var data=snap.val();
     if(!data){if(st)st.textContent="❌ Room not found";return;}
-    if(data.phase!=="lobby"){if(st)st.textContent="❌ Game already started";return;}
+    if(data.phase!=="lobby"){if(st)st.textContent="❌ Game in progress — wait for Play Again";return;}
     var players=data.players||[];
 
-    // Check if name is already taken
+    // Already in room? Rejoin same slot (handles disconnect/refresh)
+    var existingIdx=-1;
     for(var i=0;i<players.length;i++){
-      if(players[i]&&players[i].toLowerCase()===name.toLowerCase()){
-        if(st)st.textContent="❌ Name already taken, choose another";return;
-      }
+      if(players[i]&&players[i].trim().toLowerCase()===name.toLowerCase()){existingIdx=i;break;}
+    }
+    if(existingIdx>=0){
+      ONLINE.myIdx=existingIdx;
+      ONLINE.myName=players[existingIdx];
+      ONLINE.roomRef.child("joined/"+sanitizeKey(ONLINE.myName)).set(existingIdx)
+        .then(function(){listenRoom();});
+      return;
     }
 
-    // Find first empty slot
+    // New player: find empty slot or expand room
     var myIdx=-1;
     for(var i=0;i<players.length;i++){
       if(!players[i]||players[i].trim()===""){myIdx=i;break;}
     }
-    if(myIdx<0){if(st)st.textContent="❌ Room is full ("+players.length+"/"+players.length+")";return;}
+    if(myIdx<0) myIdx=players.length; // expand
 
-    // Claim the slot — write name into players array at myIdx
     ONLINE.roomRef.child("players/"+myIdx).set(name).then(function(){
       ONLINE.myIdx=myIdx;
       ONLINE.myName=name;
-      // mark as joined
-      ONLINE.roomRef.child("joined/"+sanitizeKey(name)).set(myIdx).then(function(){
-        listenRoom();
-      });
-    }).catch(function(e){if(st)st.textContent="❌ Error claiming slot: "+e.message;});
-  }).catch(function(e){if(st)st.textContent="❌ Error: "+e.message;});
+      ONLINE.roomRef.child("joined/"+sanitizeKey(name)).set(myIdx)
+        .then(function(){listenRoom();});
+    }).catch(function(e){if(st)st.textContent="❌ Error joining: "+e.message;});
+  }).catch(function(e){if(st)st.textContent="❌ Connection error: "+e.message;});
 }
+
 
 function drawJoineeLobby(data){
   var players=data.players||[];
@@ -5165,15 +5173,28 @@ function hostSkipToNextRound(){
     clueType=opts[Math.floor(Math.random()*opts.length)];
   }
   var resolvedClue=_resolveClue(round,clueType);
+
+  // Use full players array — only pick from filled slots for imposter
+  var players=data.players||[];
+  var filledSlots=[];
+  for(var i=0;i<players.length;i++){
+    if(players[i]&&players[i].trim()) filledSlots.push(i);
+  }
+  filledSlots.sort(function(){return Math.random()-.5;});
+  var impIdxs=[filledSlots[0]];
+
+  // Build roles keyed by sanitized name with correct slot idx
   var roles={};
   for(var i=0;i<players.length;i++){
+    if(!players[i]||!players[i].trim()) continue;
     roles[sanitizeKey(players[i])]={isImp:impIdxs.indexOf(i)>=0,idx:i};
   }
-  var firstIdx=Math.floor(Math.random()*players.length);
+  var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
   var spinnerSeed=Math.floor(Math.random()*100000);
   ONLINE.roomRef.update({
     phase:"spinner",
     spinnerSeed:spinnerSeed,
+    players:players,
     roundNum:nextRound,
     discussRound:1,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
@@ -5678,10 +5699,12 @@ function drawOnlineLeaderboard(data){
   if(ONLINE.isHost){
     html+="<button class='sb' style='background:linear-gradient(135deg,#FF8C00,#FFB800,#E91E63)' onclick='drawOnlineMvpVote()'>🎭 VOTE BEST ACTOR</button>";
     html+="<button class='rbtn' style='margin-top:10px' onclick='hostNewGame()'>PLAY AGAIN 🎬</button>";
-    html+="<button onclick='hostExitToMenu()' style='display:block;width:100%;margin-top:8px;padding:11px;border-radius:12px;border:1px solid rgba(156,39,176,.25);background:none;color:var(--text3);font-size:.82rem;cursor:pointer;font-family:DM Sans,sans-serif'>EXIT TO MENU</button>";
+    html+="<p style='text-align:center;color:var(--text3);font-size:.7rem;margin-top:6px'>All players stay in — new players can scan to join</p>";
+    html+="<button onclick='hostExitToMenu()' style='display:block;width:100%;margin-top:8px;padding:11px;border-radius:12px;border:1px solid rgba(156,39,176,.25);background:none;color:var(--text3);font-size:.82rem;cursor:pointer;font-family:DM Sans,sans-serif'>EXIT ROOM</button>";
   } else {
-    html+="<p style='color:var(--text3);font-size:.8rem;text-align:center;margin-top:12px'>Waiting for host to restart or exit…</p>";
+    html+="<p style='color:var(--text3);font-size:.8rem;text-align:center;margin-top:12px'>Waiting for host to start next game…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+    html+="<p style='color:var(--text3);font-size:.7rem;text-align:center;margin-top:16px'>You stay in the room automatically 👍</p>";
   }
   html+="</div>";
   html+=film();
@@ -5691,18 +5714,28 @@ function drawOnlineLeaderboard(data){
 
 function hostNewGame(){
   var data=ONLINE.gameState||{};
-  var hostName=data.host||ONLINE.myName||"";
-  var totalSlots=(data.players||[]).length||4;
-  // Rebuild slots: host at 0, rest empty
-  var newSlots=[hostName];
-  for(var i=1;i<totalSlots;i++) newSlots.push("");
-  var newJoined={};
-  if(hostName) newJoined[sanitizeKey(hostName)]=0;
+  var players=data.players||[];
+  var cfg=data.cfg||{};
+
+  // Keep ALL existing players — just reset game state
+  // Players don't need to re-scan or rejoin
+  // New players can join the lobby before host starts next game
   ONLINE.roomRef.update({
     phase:"lobby",
-    players:newSlots,
-    round:null,roles:null,votes:null,result:null,
-    usedRounds:[],roundNum:1,joined:newJoined,nextRoundVotes:{}
+    players:players,          // keep everyone
+    joined:data.joined||{},   // keep joined map
+    round:null,
+    roles:null,
+    votes:null,
+    result:null,
+    roundHistory:[],
+    usedRounds:[],
+    roundNum:1,
+    scores:{},                // reset scores for new game
+    nextRoundVotes:{},
+    discussRound:1,
+    impIdxs:null,
+    cfg:cfg                   // keep same settings
   });
 }
 
