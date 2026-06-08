@@ -1283,7 +1283,33 @@ select.aminp{cursor:pointer}
 .custom-cat-x{width:22px;height:22px;border-radius:5px;border:none;
   background:rgba(255,51,102,.12);color:var(--red);font-size:.8rem;cursor:pointer;flex-shrink:0}
 
-/* ── GRUDGE TRACKER ── */
+/* ── LOCATION LIST PANEL ── */
+.loc-list-wrap{
+  margin-top:10px;width:100%;
+  background:rgba(26,158,110,.06);
+  border:1.5px solid rgba(26,158,110,.25);
+  border-radius:14px;overflow:hidden;flex-shrink:0;
+}
+.loc-list-header{
+  padding:7px 12px;
+  background:rgba(26,158,110,.12);
+  font-size:.6rem;letter-spacing:.2em;font-weight:700;
+  color:#1a9e6e;
+}
+.loc-list-grid{
+  display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;
+  max-height:160px;overflow-y:auto;
+}
+.loc-chip{
+  padding:3px 9px;border-radius:20px;font-size:.69rem;font-weight:600;
+  background:rgba(26,158,110,.1);border:1px solid rgba(26,158,110,.25);
+  color:#1a9e6e;white-space:nowrap;
+}
+.loc-chip.current{
+  background:linear-gradient(135deg,#1a9e6e,#27ae88);
+  color:#fff;border-color:transparent;
+  box-shadow:0 2px 8px rgba(26,158,110,.35);
+}
 .grudge-wrap{
   margin:0 18px 14px;
   background:linear-gradient(135deg,rgba(233,30,99,.06),rgba(156,39,176,.04));
@@ -3001,8 +3027,9 @@ function _buildFlipBack(i){
       }
       inner+='</div>';
     }
-    inner+='<p style="font-size:.62rem;color:#999;margin-bottom:8px;text-align:center">'+(isLocation?"Ask questions to figure out the location!":"Bluff! You don\'t know the exact name.")+'</p>';
-    inner+='<button class="db" style="background:linear-gradient(135deg,#C2185B,#E91E63);width:100%;flex-shrink:0" onclick="doneReveal()">UNDERSTOOD ✓</button>';
+    inner+='<p style="font-size:.62rem;color:#999;margin-bottom:6px;text-align:center">'+(isLocation?"Try to figure out the location from the conversation!":"Bluff! You don\'t know the exact name.")+'</p>';
+    if(isLocation) inner+=buildLocationListHTML(r.n, false); // imposter sees list, no highlight
+    inner+='<button class="db" style="background:linear-gradient(135deg,#C2185B,#E91E63);width:100%;flex-shrink:0;margin-top:8px" onclick="doneReveal()">UNDERSTOOD ✓</button>';
 
   } else {
     // CREWMATE card
@@ -3020,8 +3047,11 @@ function _buildFlipBack(i){
       inner+='<p style="font-size:.68rem;color:var(--text3);margin-bottom:10px">'+h(r.d)+'</p>';
     }
     inner+='</div>';
+    if(isLocation){
+      inner+=buildLocationListHTML(r.n, true); // crewmate sees list with current highlighted
+    }
     inner+='<div style="padding:7px 10px;border-radius:10px;background:rgba(0,0,0,.05);margin-bottom:10px;flex-shrink:0">';
-    inner+='<p style="font-size:.68rem;color:var(--text3);text-align:center">'+(isLocation?"💡 Everyone has a role — ask questions, find who doesn\'t belong!":"💡 Discuss — never say the name!")+'</p>';
+    inner+='<p style="font-size:.68rem;color:var(--text3);text-align:center">'+(isLocation?"💡 Your location is highlighted green — find who doesn't belong!":"💡 Discuss — never say the name!")+'</p>';
     inner+='</div>';
     inner+='<button class="db" style="background:'+c+';width:100%;flex-shrink:0" onclick="doneReveal()">GOT IT ✓</button>';
   }
@@ -3048,38 +3078,61 @@ function showRole(){
     }
     if(partnerIdx>=0) html+="<p class='ipar'>Partner: <strong style='color:#e74c3c'>"+h(G.players[partnerIdx])+"</strong></p>";
     html+="</div>";
-    html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
-    html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(r.l==="Food"?"Indian Food":r.l==="Location"?"Indian Location":r.l+" Movie")+"</span></div>";
-    var diff=G.cfg.diff||"medium";
-    html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
-    if(diff==="easy"){
-      html+="<p class='ceye' style='color:#2ecc71'>🟢 EASY — TWO CLUES</p>";
-      html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(r.d)+"</span></div>";
-      html+="<div class='crow2'><span class='ck'>"+(r.c==="Food"||r.c==="Location"?"Description":"Year")+"</span><span class='cv'>"+(r.c==="Food"||r.c==="Location"?h(r.g):(r.y||""))+"</span></div>";
-    } else if(diff==="medium"){
-      var rc=G.resolvedClue||_resolveClue(r,G.clueType);
-      html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
-      html+="<div class='crow2'><span class='ck'>"+rc.label+"</span><span class='cv'>"+h(rc.value)+"</span></div>";
+
+    if(r.c==="Location"){
+      // Spyfall mode — imposter gets NO location clue but sees the full list
+      html+="<div class='ccard' style='border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.06);text-align:center'>";
+      html+="<p class='ceye' style='color:#e74c3c'>📍 LOCATION MODE</p>";
+      html+="<p style='font-size:.78rem;color:var(--text2);line-height:1.6;margin-top:6px'>Everyone knows the location and their role.<br><strong>You don't know where you are!</strong><br>Use the list below to guess — ask clever questions!</p>";
+      html+="</div>";
+      html+=buildLocationListHTML(r.n, false); // no highlight for imposter
+      html+="<button class='db' style='background:linear-gradient(135deg,#C2185B,#E91E63);margin-top:8px' onclick='doneReveal()'>UNDERSTOOD ✓</button>";
     } else {
-      html+="<p class='ceye' style='color:#e74c3c'>🔴 HARD — VAGUE HINT</p>";
-      html+="<div class='crow2'><span class='ck'>Hint</span><span class='cv'>"+h(r.g)+"</span></div>";
+      html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
+      html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(r.c==="Food"?"Indian Food":r.l+" Movie")+"</span></div>";
+      var diff=G.cfg.diff||"medium";
+      html+="<div class='ccard' style='border-color:"+meta.br+";background:"+meta.bg+"'>";
+      if(diff==="easy"){
+        html+="<p class='ceye' style='color:#2ecc71'>🟢 EASY — TWO CLUES</p>";
+        html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(r.d)+"</span></div>";
+        html+="<div class='crow2'><span class='ck'>"+(r.c==="Food"?"Description":"Year")+"</span><span class='cv'>"+(r.c==="Food"?h(r.g):(r.y||""))+"</span></div>";
+      } else if(diff==="medium"){
+        var rc2=G.resolvedClue||_resolveClue(r,G.clueType);
+        html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
+        html+="<div class='crow2'><span class='ck'>"+rc2.label+"</span><span class='cv'>"+h(rc2.value)+"</span></div>";
+      } else {
+        html+="<p class='ceye' style='color:#e74c3c'>🔴 HARD — VAGUE HINT</p>";
+        html+="<div class='crow2'><span class='ck'>Hint</span><span class='cv'>"+h(r.g)+"</span></div>";
+      }
+      html+="<p class='cnote'>You don't know the exact name — bluff using this clue!</p></div>";
+      html+="<button class='db' style='background:linear-gradient(135deg,#C2185B,#E91E63)' onclick='doneReveal()'>UNDERSTOOD ✓</button>";
     }
-    html+="<p class='cnote'>You don't know the exact name — bluff using this clue!</p></div>";
-    html+="<button class='db' style='background:linear-gradient(135deg,#C2185B,#E91E63)' onclick='doneReveal()'>UNDERSTOOD ✓</button>";
   } else {
+    // CREWMATE
     if(G.teams){
-      var myT=G.teams[i]===0?TA:TB, enT=G.teams[i]===0?TB:TA;
-      html+="<div class='tban' style='background:"+myT.bg+";border-color:"+myT.br+"'>";
-      html+="<span style='font-size:1.4rem'>"+myT.e+"</span><span style='color:"+myT.col+";font-weight:700;font-size:.9rem'>"+myT.n+"</span></div>";
+      var myT2=G.teams[i]===0?TA:TB;
+      html+="<div class='tban' style='background:"+myT2.bg+";border-color:"+myT2.br+"'>";
+      html+="<span style='font-size:1.4rem'>"+myT2.e+"</span><span style='color:"+myT2.col+";font-weight:700;font-size:.9rem'>"+myT2.n+"</span></div>";
     }
     html+="<div class='plc' style='border-color:"+c+"'>";
-    html+="<p class='pleye'>"+r.c.toUpperCase()+"</p>";
-    html+="<p class='mlbl'>THE ANSWER IS</p>";
-    html+="<p class='mnm' style='color:"+c+"'>"+h(r.n)+"</p></div>";
-    html+="<div class='phint'><p class='phtxt'>💡 Discuss without saying the name. Find the imposter!</p>";
+    if(r.c==="Location"){
+      html+="<p class='pleye'>LOCATION</p>";
+      html+="<p class='mlbl'>THE LOCATION IS</p>";
+      html+="<p class='mnm' style='color:"+c+"'>"+h(r.n)+"</p>";
+      html+="<div style='margin-top:8px;padding:5px 14px;background:"+c+"22;border-radius:20px;display:inline-block'>";
+      html+="<p style='font-size:.72rem;color:"+c+";font-weight:700'>Your role: "+h(r.d)+"</p>";
+      html+="</div>";
+    } else {
+      html+="<p class='pleye'>"+r.c.toUpperCase()+"</p>";
+      html+="<p class='mlbl'>THE ANSWER IS</p>";
+      html+="<p class='mnm' style='color:"+c+"'>"+h(r.n)+"</p>";
+    }
+    html+="</div>";
+    if(r.c==="Location") html+=buildLocationListHTML(r.n, true); // crewmate sees list with current highlighted
+    html+="<div class='phint'><p class='phtxt'>"+(r.c==="Location"?"💡 Your location is highlighted green. Find who doesn't belong!":"💡 Discuss without saying the name. Find the imposter!")+"</p>";
     if(G.teams){
-      var enT=G.teams[i]===0?TB:TA;
-      html+="<p class='phtxt' style='margin-top:4px;color:#e05520'>⚠️ Watch out — there's a "+enT.n+" imposter among you!</p>";
+      var enT2=G.teams[i]===0?TB:TA;
+      html+="<p class='phtxt' style='margin-top:4px;color:#e05520'>⚠️ Watch out — there's a "+enT2.n+" imposter among you!</p>";
     }
     html+="</div>";
     html+="<button class='db' style='background:"+c+"' onclick='doneReveal()'>GOT IT ✓</button>";
@@ -3115,12 +3168,20 @@ function drawDiscuss(){
   html+="<div class='rules'>";
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
   html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
-  var rc=G.resolvedClue||_resolveClue(G.round,G.clueType);
-  var cluehint=G.cfg.diff==="easy"?"Director + Year":
-               G.cfg.diff==="hard"?"Vague hint only":
-               rc.label+" name";
-  var difflbl=G.cfg.diff==="easy"?"🟢 Easy":G.cfg.diff==="hard"?"🔴 Hard":"🟡 Medium";
-  html+="<p class='rule'>"+(G.teams?"👥 Each team has one enemy imposter — find them! ":"🕵️ ")+difflbl+" · Imposter clue: "+cluehint+"</p></div>";
+  var isLocRound=G.round&&G.round.c==="Location";
+  if(isLocRound){
+    html+="<p class='rule'>📍 Location mode · Imposter doesn't know the place!</p>";
+    html+="</div>";
+    html+=buildLocationListHTML(G.round.n, true); // show list with current highlighted during discussion
+  } else {
+    var rc=G.resolvedClue||_resolveClue(G.round,G.clueType);
+    var cluehint=G.cfg.diff==="easy"?"Director + Year":
+                 G.cfg.diff==="hard"?"Vague hint only":
+                 rc.label+" name";
+    var difflbl=G.cfg.diff==="easy"?"🟢 Easy":G.cfg.diff==="hard"?"🔴 Hard":"🟡 Medium";
+    html+="<p class='rule'>"+(G.teams?"👥 Each team has one enemy imposter — find them! ":"🕵️ ")+difflbl+" · Imposter clue: "+cluehint+"</p>";
+  }
+  html+="</div>";
 
   // teams or player chips
   if(G.teams){
@@ -3632,15 +3693,36 @@ function drawLeaderboard(){
 // ── GAME LOGIC ───────────────────────────────────────────
 // ── CLUE RESOLVER — single source of truth ───────────────
 // Returns {label, value} for the imposter's clue, guaranteed non-null/non-"None"
+// ── LOCATION LIST — shown to everyone so imposter can guess ─
+function buildLocationListHTML(currentLocation, showCurrent){
+  // Get all location names from ROUNDS
+  var allLocs=[];
+  for(var i=0;i<ROUNDS.length;i++){
+    if(ROUNDS[i].c==="Location") allLocs.push(ROUNDS[i].n);
+  }
+  // Also include custom cat locations if any
+  allLocs.sort();
+  var html='<div class="loc-list-wrap">';
+  html+='<div class="loc-list-header">📍 POSSIBLE LOCATIONS ('+(showCurrent?"YOURS IS HIGHLIGHTED":"FIND YOURS")+') — '+allLocs.length+' total</div>';
+  html+='<div class="loc-list-grid">';
+  for(var i=0;i<allLocs.length;i++){
+    var isCurrent=showCurrent&&allLocs[i]===currentLocation;
+    html+='<span class="loc-chip'+(isCurrent?" current":"")+'">'+h(allLocs[i])+'</span>';
+  }
+  html+='</div></div>';
+  return html;
+}
+
 function _resolveClue(round, clueType){
   if(!round) return {label:"Director",value:""};
+  // Location rounds use Spyfall rules — imposter gets no clue at all
+  if(round.c==="Location") return {label:"",value:""};
   var ct=clueType||"director";
   var raw;
   if(ct==="hero")          raw=round.hero;
   else if(ct==="heroine")  raw=round.heroine;
   else if(ct==="comedian") raw=round.comedian;
   else                     raw=round.d;
-
   // If value is missing, "None", or same as director — always fall back to director
   if(!raw || raw==="None" || raw===round.d){
     return {label:"Director", value:round.d||""};
@@ -4971,11 +5053,12 @@ function showMyRole(data){
     html+="</div>";
 
     if(isLocation){
-      // Spyfall — imposter gets NO location clue
+      // Spyfall — imposter gets NO location clue but sees full list
       html+="<div class='ccard' style='border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.06);text-align:center'>";
       html+="<p class='ceye' style='color:#e74c3c'>📍 LOCATION MODE</p>";
-      html+="<p style='font-size:.8rem;color:var(--text2);line-height:1.6;margin-top:6px'>Everyone knows the location and their role.<br><strong>You don't know where you are!</strong><br><br>Ask questions cleverly and bluff your way through!</p>";
+      html+="<p style='font-size:.8rem;color:var(--text2);line-height:1.6;margin-top:6px'>Everyone knows the location and their role.<br><strong>You don't know where you are!</strong><br><br>Use the list below — ask questions and figure it out!</p>";
       html+="<p class='cnote' style='margin-top:10px'>Don't reveal you're the imposter!</p></div>";
+      html+=buildLocationListHTML("", false); // no highlight — imposter doesn't know which
     } else {
       html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
       html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(isFood?"Indian Food":round.l+" Movie")+"</span></div>";
@@ -5007,7 +5090,8 @@ function showMyRole(data){
       html+="<div class='crow2' style='margin-top:6px;background:"+meta.col+"22;border-radius:8px;padding:6px 10px'>";
       html+="<span class='ck'>Your role</span><span class='cv' style='color:"+meta.col+";font-weight:700'>"+h(round.d)+"</span></div>";
       html+="</div>";
-      html+="<div class='phint'><p class='phtxt'>Ask questions about this location. Find who doesn't belong — that's the imposter! Don't reveal the name directly.</p></div>";
+      html+=buildLocationListHTML(round.n, true); // crewmate sees list with current highlighted
+      html+="<div class='phint'><p class='phtxt'>Your location is highlighted green. Ask questions — find who doesn't belong!</p></div>";
     } else {
       html+="<div class='cbadge' style='background:"+meta.bg+";border-color:"+meta.br+"'>";
       html+="<span>"+meta.e+"</span><span class='clbl' style='color:"+meta.col+"'>"+(isFood?"Indian Food":round.l+" Movie")+"</span></div>";
@@ -5184,6 +5268,7 @@ function drawOnlineDiscuss(data){
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
   html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
   html+="<p class='rule'>"+(round.c==="Location"?"📍 Location mode · "+onlineClueHint:"🟡 Medium · Imposter clue: "+onlineClueHint)+"</p></div>";
+  if(round.c==="Location") html+=buildLocationListHTML(round.n, true);
 
   // ── Next Round Vote panel (if not on last round)
   if(canNextRound){
