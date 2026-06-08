@@ -4480,7 +4480,7 @@ function hostCreateRoom(){
   });
 }
 
-function sanitizeKey(name){return name.replace(/[.#$/\[\]]/g,"_");}
+function sanitizeKey(name){return (name||"").trim().replace(/[.#$/\[\]\s]/g,"_");}
 
 function listenRoom(){
   if(ONLINE.listener) ONLINE.roomRef.off("value", ONLINE.listener);
@@ -4655,14 +4655,21 @@ function hostStartGame(){
   if(!picked){alert("No rounds available for the selected filters!");return;}
   var gi=picked.gi, round=picked.round;
 
-  // pick imposters
+  // pick imposters from full player list (indices match ONLINE.myIdx)
+  var allPlayers=data.players||[];
+  var filledSlots=[];
+  for(var i=0;i<allPlayers.length;i++){
+    if(allPlayers[i]&&allPlayers[i].trim()) filledSlots.push(i);
+  }
+  if(filledSlots.length<3){alert("Need at least 3 players!");return;}
+
   var impIdxs=[];
-  var pool=[];for(var i=0;i<names.length;i++)pool.push(i);
+  var pool=filledSlots.slice();
   pool.sort(function(){return Math.random()-.5;});
-  if(cfg.dbl&&names.length>=5){impIdxs=[pool[0],pool[1]];}
+  if(cfg.dbl&&filledSlots.length>=5){impIdxs=[pool[0],pool[1]];}
   else{impIdxs=[pool[0]];}
 
-  // pick clue type — only add to opts if value is actually valid (non-null, non-None, non-director-duplicate)
+  // pick clue type
   var clueType="director";
   if(cfg.diff==="medium"&&round.l==="Tamil"){
     var opts=["director"];
@@ -4671,22 +4678,23 @@ function hostStartGame(){
     if(round.comedian&&round.comedian!=="None"&&round.comedian!==round.d)opts.push("comedian");
     clueType=opts[Math.floor(Math.random()*opts.length)];
   }
-  // Resolve clue now and write to Firebase so all clients use identical value
   var resolvedClue=_resolveClue(round,clueType);
 
-  // build roles for each player
+  // build roles keyed by sanitized player name (slot index as idx)
   var roles={};
-  for(var i=0;i<names.length;i++){
-    var isImp=impIdxs.indexOf(i)>=0;
-    roles[sanitizeKey(names[i])]={isImp:isImp,idx:i};
+  for(var i=0;i<allPlayers.length;i++){
+    if(!allPlayers[i]||!allPlayers[i].trim()) continue;
+    var isImpFlag=impIdxs.indexOf(i)>=0;
+    roles[sanitizeKey(allPlayers[i])]={isImp:isImpFlag,idx:i};
   }
 
   var usedNew=used.concat([gi]);
-  var firstIdx=Math.floor(Math.random()*names.length);
-  var spinnerSeed=Math.floor(Math.random()*100000); // deterministic spin for all clients
+  var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
+  var spinnerSeed=Math.floor(Math.random()*100000);
   ONLINE.roomRef.update({
     phase:"spinner",
     spinnerSeed:spinnerSeed,
+    players:allPlayers,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
            hero:round.hero||"None",heroine:round.heroine||"None",
            comedian:round.comedian||"None"},
@@ -4810,8 +4818,18 @@ function showMyRole(data){
   var myIdx=ONLINE.myIdx;
   var roles=data.roles||{};
   var round=data.round;
+  if(!round){render("<div class='page dark'><div style='padding:40px;text-align:center;color:#fff'><p>Loading round data…</p></div></div>");return;}
+
+  // Find role — try sanitized name first, then by idx fallback
   var myRole=roles[sanitizeKey(myName)];
-  if(!myRole){render("<div class='page'><p>Loading your role…</p></div>");return;}
+  if(!myRole){
+    // fallback: find any role with matching idx
+    for(var rk in roles){if(roles[rk]&&roles[rk].idx===myIdx){myRole=roles[rk];break;}}
+  }
+  if(!myRole){
+    render("<div class='page dark'><div style='padding:40px;text-align:center;color:#fff'><p style='font-size:1.2rem'>Loading your role…</p><div class='waiting-anim' style='margin-top:16px'><span></span><span></span><span></span></div></div></div>");
+    return;
+  }
   var isImp=myRole.isImp;
   var meta=META[round.c]||META["Movie"];
   var c=COLORS[myIdx]||"#9C27B0";
@@ -4888,13 +4906,23 @@ function showMyRole(data){
 
 // ── ONLINE SPINNER (synced across all devices) ──────────
 var _spinnerRan=false;
+var _spinnerPhase=null; // track which game phase the spinner is for
+
 function drawOnlineSpinner(data){
   var players=data.players||[];
-  var n=players.length;
+  // Filter to filled players only for display
+  var filledPlayers=players.filter(function(p){return p&&p.trim();});
+  var n=filledPlayers.length;
   var firstIdx=data.firstIdx||0;
   var spinnerSeed=data.spinnerSeed||42;
   var isHost=ONLINE.isHost;
-  _spinnerRan=false;
+
+  // Don't re-render if already spinning for this same seed (prevents Firebase update loop resetting the spin)
+  var phaseKey=spinnerSeed+"_"+firstIdx;
+  if(_spinnerPhase===phaseKey && document.getElementById('spinWheel')){
+    return; // Already rendering this spin — don't reset it
+  }
+  _spinnerPhase=phaseKey;
 
   // Build conic gradient for wheel segments
   var segColors=["#E91E63","#9C27B0","#3F51B5","#00BFA5","#FF5722","#FFB800","#2196F3","#4CAF50","#FF4081","#7C4DFF","#00E5FF","#FFAB40"];
@@ -4903,9 +4931,13 @@ function drawOnlineSpinner(data){
   var parts=[];
   for(var i=0;i<n;i++){
     var c=segColors[i%segColors.length];
-    parts.push(c+" "+(i*deg)+"deg "+(( i+1)*deg)+"deg");
+    parts.push(c+" "+(i*deg)+"deg "+((i+1)*deg)+"deg");
   }
   gradient+=parts.join(",")+")";
+
+  // Find firstIdx position in filled players array
+  var firstName=players[firstIdx]||filledPlayers[firstIdx%n]||"";
+  var firstColorSpin=segColors[firstIdx%segColors.length];
 
   var html="<div class='spin-page' id='spinPage'>";
   html+="<div class='spin-wrap'>";
@@ -4913,18 +4945,17 @@ function drawOnlineSpinner(data){
   html+="<div class='spin-wheel-outer'>";
   html+="<div class='spin-arrow'>▼</div>";
   html+="<div class='spin-wheel' id='spinWheel' style='background:"+gradient+"'>";
-  // labels around wheel
   for(var i=0;i<n;i++){
     var angle=i*deg+deg/2;
     var rad=(angle-90)*Math.PI/180;
     var tx=50+38*Math.cos(rad), ty=50+38*Math.sin(rad);
-    html+="<div style='position:absolute;left:"+tx+"%;top:"+ty+"%;transform:translate(-50%,-50%) rotate("+angle+"deg);font-size:"+Math.max(8,Math.floor(26/n))+"px;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis'>"+h(players[i].split(' ')[0])+"</div>";
+    html+="<div style='position:absolute;left:"+tx+"%;top:"+ty+"%;transform:translate(-50%,-50%) rotate("+angle+"deg);font-size:"+Math.max(8,Math.floor(26/n))+"px;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis'>"+h(filledPlayers[i].split(' ')[0])+"</div>";
   }
   html+="<div class='spin-center'>🎬</div>";
   html+="</div></div>";
   html+="<div id='spinResult' style='display:none'>";
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
-  html+="<p class='spin-result-name' id='spinWinnerName'></p>";
+  html+="<p class='spin-result-name' id='spinWinnerName' style='color:"+firstColorSpin+"'>"+h(firstName)+"</p>";
   if(isHost){
     html+="<button class='spin-btn' onclick='hostMoveToRoles()'>REVEAL ROLES 🎬</button>";
   } else {
@@ -4935,32 +4966,31 @@ function drawOnlineSpinner(data){
   html+="</div></div>";
   render(html);
 
-  // Animate the wheel — deterministic based on spinnerSeed
-  // All devices spin the same number of extra degrees using seeded value
-  var extraRotations=5+((spinnerSeed%8)); // 5–12 full rotations
+  // Deterministic rotation — same seed = same final angle on all devices
+  var extraRotations=5+(spinnerSeed%8);
   var segAngle=360/n;
-  // Target: firstIdx segment centre should land under the arrow (top = 0 deg offset)
-  // Wheel rotates clockwise; segment i starts at i*segAngle
-  // To land firstIdx under arrow: final angle = 360 - (firstIdx*segAngle + segAngle/2)
-  var landAngle=360-(firstIdx*segAngle+segAngle/2);
+  // Map firstIdx (full players array) to position in filled players array
+  var filledPos=0;
+  var filled=0;
+  for(var i=0;i<players.length;i++){
+    if(!players[i]||!players[i].trim()) continue;
+    if(i===firstIdx){filledPos=filled;break;}
+    filled++;
+  }
+  var landAngle=360-(filledPos*segAngle+segAngle/2);
   var totalRotation=extraRotations*360+landAngle;
 
   var wheel=document.getElementById('spinWheel');
   if(wheel){
-    // Brief delay for drama, then spin
     setTimeout(function(){
       if(!document.getElementById('spinWheel')) return;
       wheel.style.transition="transform 4s cubic-bezier(.17,.67,.12,1)";
       wheel.style.transform="rotate("+totalRotation+"deg)";
-      // Show result after spin
       setTimeout(function(){
         var res=document.getElementById('spinResult');
-        var nm=document.getElementById('spinWinnerName');
-        if(nm) nm.textContent=players[firstIdx]||"";
-        if(nm) nm.style.color=segColors[firstIdx%segColors.length];
         if(res) res.style.display="block";
       }, 4200);
-    }, 600);
+    }, 400);
   }
 }
 
