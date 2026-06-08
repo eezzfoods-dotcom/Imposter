@@ -10,6 +10,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Imposter">
 <meta name="description" content="Imposter – India Edition. Tamil movies party game for friends.">
+
+<!-- PWA Manifest — inline as data URI so the single HTML file is self-contained -->
+<link rel="manifest" id="pwaManifest">
+<!-- Apple touch icons generated inline via JS below -->
+<link rel="apple-touch-icon" id="appleTouchIcon">
 <script>
 // Safe stub — replaced if Firebase loads successfully
 var DB = {
@@ -826,6 +831,16 @@ select.aminp{cursor:pointer}
 .ginp{width:100%;border-radius:10px}
 .gres{color:var(--text3);font-size:.78rem;margin-top:8px}
 
+.tiebox{
+  background:linear-gradient(135deg,rgba(255,184,0,.1),rgba(232,160,32,.07));
+  border:2px solid rgba(255,184,0,.5);
+  border-radius:20px;padding:22px;text-align:center;margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.tiebox::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -20%,rgba(255,184,0,.18),transparent);
+}
 /* ── RESULT ── */
 .wbox{
   background:linear-gradient(135deg,rgba(0,191,165,.12),rgba(33,150,243,.08));
@@ -1268,7 +1283,90 @@ select.aminp{cursor:pointer}
 .custom-cat-x{width:22px;height:22px;border-radius:5px;border:none;
   background:rgba(255,51,102,.12);color:var(--red);font-size:.8rem;cursor:pointer;flex-shrink:0}
 
-/* ── NEXT ROUND VOTE ── */
+/* ── GRUDGE TRACKER ── */
+.grudge-wrap{
+  margin:0 18px 14px;
+  background:linear-gradient(135deg,rgba(233,30,99,.06),rgba(156,39,176,.04));
+  border:1.5px solid rgba(233,30,99,.2);
+  border-radius:16px;overflow:hidden;
+}
+.grudge-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.grudge-title{
+  font-family:'Bebas Neue',cursive;font-size:1.1rem;
+  letter-spacing:.06em;color:#E91E63;
+  display:flex;align-items:center;gap:8px;
+}
+.grudge-badge{
+  font-family:'DM Sans',sans-serif;font-size:.65rem;
+  background:#E91E63;color:#fff;padding:2px 7px;
+  border-radius:20px;letter-spacing:.04em;font-weight:700;
+}
+.grudge-chevron{font-size:.8rem;color:var(--text3);transition:transform .25s}
+.grudge-chevron.open{transform:rotate(180deg)}
+.grudge-body{padding:0 14px 12px;display:none}
+.grudge-body.open{display:block}
+.grudge-item{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 10px;margin-bottom:6px;
+  background:rgba(255,255,255,.7);
+  border:1px solid rgba(233,30,99,.12);
+  border-radius:11px;
+}
+.grudge-item.top{
+  border-color:rgba(233,30,99,.4);
+  background:linear-gradient(135deg,rgba(233,30,99,.08),rgba(156,39,176,.05));
+}
+.grudge-faces{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.grudge-av{
+  width:26px;height:26px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:.82rem;flex-shrink:0;
+}
+.grudge-arrow{font-size:.75rem;color:var(--text3)}
+.grudge-text{flex:1;min-width:0}
+.grudge-voter{font-size:.8rem;font-weight:700;color:var(--text2)}
+.grudge-detail{font-size:.72rem;color:var(--text3);margin-top:1px}
+.grudge-count{
+  font-family:'Bebas Neue',cursive;font-size:1.4rem;
+  letter-spacing:.04em;flex-shrink:0;
+}
+.grudge-eyes{font-size:.95rem;flex-shrink:0}
+.grudge-empty{
+  text-align:center;padding:14px 10px;
+  color:var(--text3);font-size:.8rem;
+}
+
+/* ── PWA INSTALL BANNER ── */
+.pwa-banner{
+  position:fixed;bottom:0;left:0;right:0;z-index:99998;
+  background:linear-gradient(135deg,#1a0533,#2d0a5e);
+  border-top:2px solid rgba(233,30,99,.5);
+  padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  animation:slideUp .35s ease;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.pwa-ico{font-size:2rem;flex-shrink:0}
+.pwa-text{flex:1;min-width:0}
+.pwa-title{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:.05em;color:#fff;margin-bottom:2px}
+.pwa-sub{font-size:.7rem;color:rgba(255,255,255,.55);line-height:1.4}
+.pwa-install-btn{
+  padding:9px 16px;background:linear-gradient(135deg,#E91E63,#9C27B0);
+  border:none;border-radius:10px;color:#fff;
+  font-family:'Bebas Neue',cursive;font-size:.95rem;letter-spacing:.06em;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 3px 12px rgba(233,30,99,.4);
+}
+.pwa-close-btn{
+  width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);
+  font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
 .nr-wrap{
   background:rgba(123,31,162,.04);
   border:1px solid rgba(123,31,162,.15);
@@ -2515,11 +2613,11 @@ function drawSetup(){
   html+="<button class='tglb"+(s.pts?" on":"")+"' onclick='tog(\"pts\")'>"+(s.pts?"ON ✓":"OFF")+"</button></div>";
   if(s.pts){
     html+="<div class='pgrid' style='margin-top:4px'>";
-    html+="<div class='prow'><span class='pico'>🟢</span><span class='pdsc'>Catch imposter</span><span class='pval'>+"+PTS.pc+"</span></div>";
-    html+="<div class='prow'><span class='pico'>🔴</span><span class='pdsc'>Imposter escapes (you lose)</span><span class='pval'>"+PTS.pe+"</span></div>";
-    html+="<div class='prow'><span class='pico'>🟣</span><span class='pdsc'>Imposter escapes undetected</span><span class='pval'>+"+PTS.ie+"</span></div>";
-    html+="<div class='prow'><span class='pico'>🔵</span><span class='pdsc'>Imposter guesses name correctly</span><span class='pval'>+"+PTS.ig+"</span></div>";
-    html+="<div class='prow'><span class='pico'>⚫</span><span class='pdsc'>Imposter gets caught</span><span class='pval'>"+PTS.ic+"</span></div>";
+    html+="<div class='prow'><span class='pico'>🟢</span><span class='pdsc'>Crewmate: imposter caught</span><span class='pval'>+"+PTS.pc+"</span></div>";
+    html+="<div class='prow'><span class='pico'>🔴</span><span class='pdsc'>Crewmate: imposter escapes</span><span class='pval'>"+PTS.pe+"</span></div>";
+    html+="<div class='prow'><span class='pico'>🟣</span><span class='pdsc'>Imposter: escapes undetected</span><span class='pval'>+"+PTS.ie+"</span></div>";
+    html+="<div class='prow'><span class='pico'>⚫</span><span class='pdsc'>Imposter: gets caught</span><span class='pval'>"+PTS.ic+"</span></div>";
+    html+="<div class='prow'><span class='pico'>🔵</span><span class='pdsc'>Imposter: guesses name correctly</span><span class='pval'>+"+PTS.ig+" bonus</span></div>";
     if(s.tm&&canTm) html+="<div class='prow'><span class='pico'>🏆</span><span class='pdsc'>Team catches enemy imposter</span><span class='pval'>+"+PTS.tw+" team</span></div>";
     html+="</div>";
   } else {
@@ -3149,19 +3247,23 @@ function showResult(){
   var impRevealed=G.imposterReveal||false;
   G.imposterReveal=false; // reset for next round
 
+  // Did votes actually happen or was it a tie/empty?
+  var isTie=!anyCaught&&!impRevealed&&Object.keys(G.votes).length>0&&elim===-1;
+
   var html="<div class='page'><div class='swrap'>";
-  var bannerClass=anyCaught?"wbox":"lbox";
-  if(impRevealed) bannerClass="lbox"; // imposter won = players lost
+  var bannerClass=anyCaught?"wbox":isTie?"tiebox":"lbox";
+  if(impRevealed) bannerClass="lbox";
   html+="<div class='"+bannerClass+"'>";
-  var emoji=impRevealed?"🕵️":anyCaught?"🎉":"🕵️";
-  var headline=impRevealed?"IMPOSTER WON!":anyCaught?"IMPOSTER CAUGHT!":"IMPOSTER ESCAPED!";
-  var subline=impRevealed?"போலி வெற்றி பெற்றார்!":anyCaught?"போலி பிடிபட்டார்!":"போலி தப்பித்தார்!";
+  var emoji=impRevealed?"🕵️":anyCaught?"🎉":isTie?"🤝":"🕵️";
+  var headline=impRevealed?"IMPOSTER WON!":anyCaught?"IMPOSTER CAUGHT!":isTie?"VOTE TIED!":"IMPOSTER ESCAPED!";
+  var subline=impRevealed?"போலி வெற்றி பெற்றார்!":anyCaught?"போலி பிடிபட்டார்!":isTie?"வாக்குகள் சமம்!":"போலி தப்பித்தார்!";
   html+="<div style='font-size:2.4rem;margin-bottom:6px'>"+emoji+"</div>";
   html+="<h2 class='rhead'>"+headline+"</h2>";
   html+="<p class='rta'>"+subline+"</p>";
   var impNames=[];
   for(var x=0;x<impIdxs.length;x++) impNames.push(h(players[impIdxs[x]]));
   if(impRevealed) html+="<p class='rwas' style='color:#e74c3c'>"+impNames.join(" &amp; ")+" revealed the movie name!</p>";
+  else if(isTie) html+="<p class='rwas' style='color:#e8a020'>Vote was split — no one eliminated. Imposter escapes!</p>";
   else html+="<p class='rwas'>Imposter"+(impIdxs.length>1?"s":"")+": "+impNames.join(" &amp; ")+"</p>";
   html+="</div>";
 
@@ -3193,11 +3295,23 @@ function showResult(){
     html+="<p class='isclbl'>INDIVIDUAL SCORES</p><div class='tlist'>";
     for(var ri=0;ri<sorted.length;ri++){
       var i=sorted[ri];
+      var guessBonus=0;
+      if(isImp(i)){
+        var g2=(G.guesses[i]||"").trim().toLowerCase();
+        if(g2===r.n.toLowerCase()) guessBonus=PTS.ig;
+      }
+      var baseD=delta[i]-guessBonus; // delta without guess bonus
       html+="<div class='trow2' style='"+(isImp(i)?"border-color:rgba(231,76,60,.35)":"")+"'>";
       html+="<span class='trnk'>#"+(ri+1)+"</span>";
       html+="<div class='tav' style='background:"+col(i)+"'>"+av(i)+"</div>";
       html+="<span class='tnm'>"+h(players[i])+(isImp(i)?"<span class='ibdg'> 🕵️</span>":"")+"</span>";
-      html+="<span class='tdlt' style='color:"+(delta[i]>=0?"#2ecc71":"#e74c3c")+"'>"+(delta[i]>=0?"+":"")+delta[i]+"</span>";
+      // Show breakdown if imposter got guess bonus
+      if(isImp(i)&&guessBonus>0){
+        html+="<span class='tdlt' style='color:#f39c12;font-size:.72rem'>"+
+          (baseD>=0?"+":"")+baseD+"<span style='color:#2ecc71'>+"+guessBonus+"🎯</span></span>";
+      } else {
+        html+="<span class='tdlt' style='color:"+(delta[i]>=0?"#2ecc71":"#e74c3c")+"'>"+(delta[i]>=0?"+":"")+delta[i]+"</span>";
+      }
       html+="<span class='ttot'>"+newS[i]+"pt</span></div>";
     }
     html+="</div>";
@@ -3210,6 +3324,85 @@ function showResult(){
 }
 
 // ── LEADERBOARD ──────────────────────────────────────────
+// ── GRUDGE TRACKER ───────────────────────────────────────
+function buildGrudgeHTML(players){
+  var gm=G.grudgeMap||{};
+  // Flatten into array of {voter, voted, count}
+  var pairs=[];
+  for(var vi in gm){
+    for(var vd in gm[vi]){
+      var cnt=gm[vi][vd];
+      if(cnt>0) pairs.push({voter:parseInt(vi),voted:parseInt(vd),count:cnt});
+    }
+  }
+  if(!pairs.length) return ''; // nobody voted → no grudges section
+  // Sort by count descending
+  pairs.sort(function(a,b){return b.count-a.count;});
+  var maxCount=pairs[0].count;
+  // Only show when at least one person voted ≥2 times for someone
+  // (1 time is normal; ≥2 is a grudge)
+  var realGrudges=pairs.filter(function(p){return p.count>=2;});
+
+  var html="<div class='grudge-wrap' id='grudgeWrap'>";
+  html+="<div class='grudge-header' onclick='toggleGrudge()' style='padding:12px 16px'>";
+  html+="<span class='grudge-title'>👀 GRUDGE REPORT";
+  if(realGrudges.length) html+="<span class='grudge-badge'>"+realGrudges.length+" grudge"+(realGrudges.length>1?"s":"")+"</span>";
+  html+="</span>";
+  html+="<span class='grudge-chevron' id='grudgeChevron'>▼</span>";
+  html+="</div>";
+  html+="<div class='grudge-body' id='grudgeBody'>";
+
+  if(!pairs.length){
+    html+="<div class='grudge-empty'>Everyone played fair 😇<br>No suspicious voting patterns.</div>";
+  } else {
+    // Show top pairings — cap at 8 rows
+    var show=pairs.slice(0,8);
+    for(var i=0;i<show.length;i++){
+      var p=show[i];
+      var isTop=p.count>=2&&p.count===maxCount;
+      var voterName=players[p.voter]||"?";
+      var votedName=players[p.voted]||"?";
+      // Pick emoji based on count
+      var eyes=p.count>=3?"🔥":p.count===2?"😤":"👀";
+      var label=p.count===1?"voted once":
+                p.count===2?"voted TWICE 😤":
+                p.count===3?"voted 3× — sus! 😱":
+                "voted "+p.count+"× — personal! 💀";
+      html+="<div class='grudge-item"+(isTop?" top":"")+"'>";
+      html+="<div class='grudge-faces'>";
+      html+="<div class='grudge-av' style='background:"+COLORS[p.voter%COLORS.length]+"'>"+AVS[p.voter%AVS.length]+"</div>";
+      html+="<span class='grudge-arrow'>→</span>";
+      html+="<div class='grudge-av' style='background:"+COLORS[p.voted%COLORS.length]+"'>"+AVS[p.voted%AVS.length]+"</div>";
+      html+="</div>";
+      html+="<div class='grudge-text'>";
+      html+="<div class='grudge-voter'>"+h(voterName)+" ↠ "+h(votedName)+"</div>";
+      html+="<div class='grudge-detail'>"+label+"</div>";
+      html+="</div>";
+      html+="<span class='grudge-count' style='color:"+(p.count>=3?"#E91E63":p.count===2?"#9C27B0":"var(--text3)")+"'>×"+p.count+"</span>";
+      html+="<span class='grudge-eyes'>"+eyes+"</span>";
+      html+="</div>";
+    }
+    // Callout for biggest grudge
+    if(realGrudges.length){
+      var top=realGrudges[0];
+      html+="<div style='text-align:center;padding:8px 4px 4px;color:#E91E63;font-size:.75rem;font-weight:700'>";
+      html+="🔥 "+h(players[top.voter]||"?")+" really had it in for "+h(players[top.voted]||"?")+"!";
+      html+="</div>";
+    }
+  }
+  html+="</div></div>";
+  return html;
+}
+
+function toggleGrudge(){
+  var body=document.getElementById('grudgeBody');
+  var chevron=document.getElementById('grudgeChevron');
+  if(!body) return;
+  var open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  if(chevron) chevron.classList.toggle('open',!open);
+}
+
 function drawLeaderboard(){
   var players=G.players,scores=G.scores,teams=G.teams;
   var usePts=G.cfg.pts;
@@ -3287,7 +3480,13 @@ function drawLeaderboard(){
     else if(wasImp) html+="<span style='font-size:.7rem;color:#e74c3c;font-weight:700'>WAS IMPOSTER</span>";
     html+="</div>";
   }
-  html+="<button class='sb' style='margin-top:20px;background:linear-gradient(135deg,#FF8C00,#FFB800,#E91E63)' onclick='drawMvpVote()'>🎭 VOTE BEST ACTOR</button>";
+  html+="</div>";
+
+  // ── GRUDGE TRACKER ────────────────────────────────────────
+  html+=buildGrudgeHTML(players);
+
+  html+="<div style='padding:0 18px 18px'>";
+  html+="<button class='sb' style='background:linear-gradient(135deg,#FF8C00,#FFB800,#E91E63)' onclick='drawMvpVote()'>🎭 VOTE BEST ACTOR</button>";
   html+="<button onclick='drawStats()' style='display:block;width:100%;margin-top:10px;padding:10px;border-radius:12px;border:1.5px solid rgba(156,39,176,.25);background:rgba(156,39,176,.06);color:#9C27B0;font-size:.8rem;font-weight:700;cursor:pointer'>📊 VIEW ALL-TIME STATS</button>";
   html+="<p style='text-align:center;font-size:.72rem;color:var(--text3);margin-top:10px'>Who fooled you the most?</p>";
   html+="</div></div></div>";
@@ -3446,6 +3645,7 @@ function startGame(){
   G.scores={}; for(var i=0;i<names.length;i++) G.scores[i]=0;
   G.tscores={0:0,1:0};
   G.roundNum=1; G.used=[]; G.lastImps=[]; G.allGameImps=[]; G.passOrder=[]; G.roundHistory=[]; G.lastImpRevealed=false; G.discussRound=1;
+  G.grudgeMap={}; // grudgeMap[voterIdx][votedIdx] = count
   if(cfg.tm){
     var half=Math.floor(names.length/2);
     var shuf=[];
@@ -3485,6 +3685,15 @@ function lockVotes(){
 function goNext(){
   G.scores=G.newScores;
   G.tscores=G.newTS;
+  // ── Record grudge votes ───────────────────────────────────
+  if(!G.grudgeMap) G.grudgeMap={};
+  for(var k in G.votes){
+    var voterIdx=parseInt(k);
+    var votedIdx=G.votes[k];
+    if(isNaN(voterIdx)||voterIdx===votedIdx) continue;
+    if(!G.grudgeMap[voterIdx]) G.grudgeMap[voterIdx]={};
+    G.grudgeMap[voterIdx][votedIdx]=(G.grudgeMap[voterIdx][votedIdx]||0)+1;
+  }
   // Track round history for no-points leaderboard
   if(!G.roundHistory) G.roundHistory=[];
   var tally2=[];
@@ -5123,9 +5332,157 @@ loadSavedNames();
 (function(){
   var autoJoin=(new URLSearchParams(window.location.search)).get("join")||"";
   if(autoJoin&&autoJoin.length===4){
-    drawJoinRoom(); // goes straight to join screen with code pre-filled
+    drawJoinRoom();
   } else {
     drawModeSelect();
+  }
+})();
+
+// ── PWA — MANIFEST + SERVICE WORKER + INSTALL BANNER ─────
+(function(){
+  // 1. Generate an SVG icon as a data URI
+  var svgIcon='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'+
+    '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">'+
+    '<stop offset="0%" stop-color="#E91E63"/><stop offset="100%" stop-color="#9C27B0"/></linearGradient></defs>'+
+    '<rect width="192" height="192" rx="40" fill="url(#g)"/>'+
+    '<text x="96" y="128" font-size="110" text-anchor="middle" font-family="sans-serif">🕵️</text>'+
+    '<text x="96" y="178" font-size="22" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="sans-serif" font-weight="700" letter-spacing="2">IMPOSTER</text>'+
+    '</svg>';
+  var svgUri='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgIcon);
+
+  // Set Apple touch icon
+  var ati=document.getElementById('appleTouchIcon');
+  if(ati) ati.href=svgUri;
+
+  // 2. Build and inject the Web App Manifest as a data URI
+  var manifest={
+    name:'IMPOSTER – India Edition',
+    short_name:'Imposter',
+    description:'Tamil movies party game for friends',
+    start_url:window.location.pathname+window.location.search,
+    display:'standalone',
+    orientation:'portrait',
+    background_color:'#1a0533',
+    theme_color:'#E91E63',
+    icons:[
+      {src:svgUri,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},
+      {src:svgUri,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}
+    ]
+  };
+  var manifestEl=document.getElementById('pwaManifest');
+  if(manifestEl){
+    manifestEl.href='data:application/manifest+json;charset=utf-8,'+encodeURIComponent(JSON.stringify(manifest));
+  }
+
+  // 3. Register a Service Worker via a Blob URL so the single HTML file caches itself
+  if('serviceWorker' in navigator){
+    var swCode=[
+      'var CACHE="imposter-v2";',
+      'var PAGE=location.href;',
+      // Install: cache this page
+      'self.addEventListener("install",function(e){',
+      '  e.waitUntil(caches.open(CACHE).then(function(c){',
+      '    return c.addAll([PAGE,"https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=Noto+Serif+Tamil&display=swap"]);',
+      '  }).catch(function(){}));',
+      '  self.skipWaiting();',
+      '});',
+      // Activate: delete old caches
+      'self.addEventListener("activate",function(e){',
+      '  e.waitUntil(caches.keys().then(function(keys){',
+      '    return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));',
+      '  }));',
+      '  self.clients.claim();',
+      '});',
+      // Fetch: serve from cache, fall back to network, then cache response
+      'self.addEventListener("fetch",function(e){',
+      '  if(e.request.method!=="GET") return;',
+      '  e.respondWith(caches.match(e.request).then(function(cached){',
+      '    if(cached) return cached;',
+      '    return fetch(e.request).then(function(res){',
+      '      if(res&&res.ok){',
+      '        var clone=res.clone();',
+      '        caches.open(CACHE).then(function(c){c.put(e.request,clone);});',
+      '      }',
+      '      return res;',
+      '    }).catch(function(){return cached;});',
+      '  }));',
+      '});'
+    ].join('\n');
+
+    var blob=new Blob([swCode],{type:'application/javascript'});
+    var swUrl=URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl,{scope:'./'})
+      .then(function(reg){
+        // Revoke the blob URL after a short delay (SW is already parsed)
+        setTimeout(function(){URL.revokeObjectURL(swUrl);},3000);
+      })
+      .catch(function(){/* offline install unavailable — silent fail */});
+  }
+
+  // 4. PWA Install Banner — show when browser fires beforeinstallprompt
+  var _deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    _deferredPrompt=e;
+    // Only show if user hasn't dismissed it before
+    try{ if(localStorage.getItem('pwa_dismissed')) return; }catch(ex){}
+    showPWABanner();
+  });
+
+  function showPWABanner(){
+    if(document.getElementById('pwaBanner')) return;
+    var banner=document.createElement('div');
+    banner.id='pwaBanner';
+    banner.className='pwa-banner';
+    banner.innerHTML=
+      '<div class="pwa-ico">🕵️</div>'+
+      '<div class="pwa-text">'+
+        '<div class="pwa-title">Install Imposter</div>'+
+        '<div class="pwa-sub">Play offline anytime — add to Home Screen</div>'+
+      '</div>'+
+      '<button class="pwa-install-btn" onclick="triggerPWAInstall()">INSTALL</button>'+
+      '<button class="pwa-close-btn" onclick="dismissPWABanner()" title="Dismiss">✕</button>';
+    document.body.appendChild(banner);
+  }
+
+  window.triggerPWAInstall=function(){
+    if(!_deferredPrompt) return;
+    _deferredPrompt.prompt();
+    _deferredPrompt.userChoice.then(function(){
+      _deferredPrompt=null;
+      dismissPWABanner();
+    });
+  };
+
+  window.dismissPWABanner=function(){
+    var b=document.getElementById('pwaBanner');
+    if(b) b.remove();
+    try{localStorage.setItem('pwa_dismissed','1');}catch(ex){}
+  };
+
+  // iOS Safari doesn't fire beforeinstallprompt — show a manual tip instead
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isStandalone=window.navigator.standalone===true;
+  if(isIOS&&!isStandalone){
+    try{
+      if(!localStorage.getItem('pwa_dismissed')&&!localStorage.getItem('ios_tip_shown')){
+        setTimeout(function(){
+          if(document.getElementById('pwaBanner')) return;
+          var banner=document.createElement('div');
+          banner.id='pwaBanner';
+          banner.className='pwa-banner';
+          banner.innerHTML=
+            '<div class="pwa-ico">📲</div>'+
+            '<div class="pwa-text">'+
+              '<div class="pwa-title">Add to Home Screen</div>'+
+              '<div class="pwa-sub">Tap <strong style="color:#E91E63">Share</strong> → <strong style="color:#E91E63">Add to Home Screen</strong> to install</div>'+
+            '</div>'+
+            '<button class="pwa-close-btn" onclick="dismissPWABanner()" title="Dismiss">✕</button>';
+          document.body.appendChild(banner);
+          localStorage.setItem('ios_tip_shown','1');
+        }, 3500);
+      }
+    }catch(ex){}
   }
 })();
 </script>
