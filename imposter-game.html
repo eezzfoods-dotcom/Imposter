@@ -544,7 +544,7 @@ html,body{
 .catbtn.food-on{border-color:#e05520;background:linear-gradient(135deg,#e05520,#f07030);color:#fff;box-shadow:0 3px 10px rgba(224,85,32,.35);}
 .catbtn.loc-on{border-color:#1a9e6e;background:linear-gradient(135deg,#1a9e6e,#27ae88);color:#fff;box-shadow:0 3px 10px rgba(26,158,110,.35);}
 
-
+.langbtn{
   padding:7px 16px;border-radius:20px;
   border:1px solid var(--border2);
   background:var(--surface);color:var(--text3);
@@ -1071,12 +1071,12 @@ select.aminp{cursor:pointer}
 
 
 /* ── FLIP CARD ── */
-.flip-scene{perspective:900px;width:calc(100% - 32px);max-width:320px;height:380px;margin:0 auto 16px;cursor:pointer}
+.flip-scene{perspective:900px;width:calc(100% - 32px);max-width:320px;height:400px;margin:0 auto 16px;cursor:pointer}
 .flip-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1)}
 .flip-card.flipped{transform:rotateY(180deg)}
-.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;box-sizing:border-box}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;box-sizing:border-box;overflow:hidden}
 .flip-front{background:linear-gradient(135deg,#1a0533,#2d0a5e);border:2px solid rgba(156,39,176,.5);box-shadow:0 8px 32px rgba(0,0,0,.45)}
-.flip-back{transform:rotateY(180deg)}
+.flip-back{transform:rotateY(180deg);justify-content:flex-start;align-items:stretch;overflow-y:auto;padding:14px 12px;gap:0}
 .flip-qmark{font-size:3.8rem;animation:fpulse 1.6s ease-in-out infinite}
 @keyframes fpulse{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.1);opacity:1}}
 .flip-tap{font-size:.68rem;color:rgba(255,255,255,.4);letter-spacing:.12em;margin-top:4px}
@@ -1206,6 +1206,68 @@ select.aminp{cursor:pointer}
 .confirm-overlay{pointer-events:auto !important;touch-action:manipulation !important}
 .confirm-box{pointer-events:auto !important}
 
+/* ── ONLINE SPINNER WHEEL ── */
+.spin-page{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(233,30,99,.22),transparent),
+  linear-gradient(160deg,#1a0533 0%,#0a0220 100%);padding:20px;box-sizing:border-box}
+.spin-wrap{width:100%;max-width:380px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.spin-eye{color:rgba(255,255,255,.45);font-size:.58rem;letter-spacing:.45em;font-weight:700;margin-bottom:18px}
+.spin-wheel-outer{position:relative;width:240px;height:240px;margin:0 auto 20px}
+.spin-arrow{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:1.6rem;z-index:10;filter:drop-shadow(0 2px 6px rgba(233,30,99,.6))}
+.spin-wheel{width:240px;height:240px;border-radius:50%;position:relative;overflow:hidden;
+  border:4px solid rgba(255,255,255,.15);box-shadow:0 0 60px rgba(233,30,99,.3),0 0 0 1px rgba(255,255,255,.05)}
+.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:40px;height:40px;border-radius:50%;background:#fff;z-index:5;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  box-shadow:0 0 0 4px rgba(233,30,99,.3)}
+.spin-result-name{font-family:'Bebas Neue',cursive;font-size:2.8rem;letter-spacing:.06em;
+  color:#fff;margin-bottom:6px;animation:fadein .4s ease}
+.spin-result-lbl{color:rgba(255,255,255,.5);font-size:.72rem;letter-spacing:.12em;margin-bottom:24px}
+.spin-btn{padding:14px 32px;background:linear-gradient(135deg,#E91E63,#9C27B0);
+  border:none;border-radius:14px;color:#fff;font-family:'Bebas Neue',cursive;
+  font-size:1.1rem;letter-spacing:.1em;cursor:pointer;
+  box-shadow:0 4px 20px rgba(233,30,99,.4);transition:all .2s}
+.spin-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(233,30,99,.55)}
+.spin-waiting{color:rgba(255,255,255,.4);font-size:.8rem;margin-top:12px}
+
+/* ── IMPOSTER GUESS BONUS OVERLAY ── */
+.imp-guess-overlay{
+  position:fixed;inset:0;z-index:200000;
+  background:rgba(10,5,20,.82);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.imp-guess-box{
+  background:#fff;border-radius:22px;padding:30px 24px;text-align:center;
+  max-width:340px;width:100%;
+  border:2px solid rgba(233,30,99,.4);
+  box-shadow:0 20px 60px rgba(233,30,99,.25);
+  animation:fadein .3s ease;
+}
+.imp-guess-title{font-family:'Bebas Neue',cursive;font-size:2rem;letter-spacing:.06em;
+  color:#E91E63;margin-bottom:4px}
+.imp-guess-sub{color:var(--text3);font-size:.8rem;line-height:1.5;margin-bottom:18px}
+.imp-guess-inp{width:100%;background:var(--bg);border:2px solid var(--border2);
+  border-radius:12px;padding:11px 14px;color:var(--text);font-size:.95rem;
+  font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;margin-bottom:12px;
+  transition:border-color .2s}
+.imp-guess-inp:focus{border-color:#E91E63;box-shadow:0 0 0 3px rgba(233,30,99,.12)}
+.imp-guess-submit{width:100%;padding:13px;background:linear-gradient(135deg,#C2185B,#E91E63);
+  border:none;border-radius:12px;color:#fff;font-family:'Bebas Neue',cursive;
+  font-size:1.1rem;letter-spacing:.1em;cursor:pointer;margin-bottom:8px;
+  box-shadow:0 4px 16px rgba(233,30,99,.3);transition:all .2s}
+.imp-guess-skip{width:100%;padding:10px;background:none;border:1px solid rgba(156,39,176,.25);
+  border-radius:12px;color:var(--text3);font-size:.82rem;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s}
+
+/* ── CUSTOM CATEGORIES ── */
+.custom-cat-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:200px;overflow-y:auto}
+.custom-cat-item{display:flex;align-items:center;gap:8px;background:rgba(123,31,162,.05);
+  border:1px solid rgba(123,31,162,.15);border-radius:9px;padding:8px 11px}
+.custom-cat-name{flex:1;color:var(--text2);font-size:.82rem;font-weight:600}
+.custom-cat-count{color:var(--text3);font-size:.7rem}
+.custom-cat-x{width:22px;height:22px;border-radius:5px;border:none;
+  background:rgba(255,51,102,.12);color:var(--red);font-size:.8rem;cursor:pointer;flex-shrink:0}
+
 /* ── NEXT ROUND VOTE ── */
 .nr-wrap{
   background:rgba(123,31,162,.04);
@@ -1303,7 +1365,7 @@ var ROUNDS=[
   {c:"Movie",l:"Tamil",n:"Visaranai",d:"Vetrimaaran",y:"2015",g:"A crime drama based on real police brutality",hero:"Dinesh",heroine:"None",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Jigarthanda",d:"Karthik Subbaraj",y:"2014",g:"A dark comedy about a filmmaker trying to make a gangster film",hero:"Siddharth",heroine:"Lakshmi Menon",comedian:"Bobby Simha"},
   {c:"Movie",l:"Tamil",n:"Petta",d:"Karthik Subbaraj",y:"2019",g:"An action film about a mysterious hostel warden with a dark past",hero:"Rajinikanth",heroine:"Simran",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Super Deluxe",d:"Thiagarajan Kumararaja",y:"2019",g:"A bold anthology film about four unexpected and interlinked stories",hero:"Vijay Sethupathi",heroine:"Fahadh Faasil",comedian:"None"},
+  {c:"Movie",l:"Tamil",n:"Super Deluxe",d:"Thiagarajan Kumararaja",y:"2019",g:"A bold anthology film about four unexpected and interlinked stories",hero:"Vijay Sethupathi",heroine:"Ramya Krishnan",comedian:"Fahadh Faasil"},
   {c:"Movie",l:"Tamil",n:"Sarpatta Parambarai",d:"Pa. Ranjith",y:"2021",g:"A period boxing drama set in 1970s North Madras",hero:"Arya",heroine:"Dushara Vijayan",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Kabali",d:"Pa. Ranjith",y:"2016",g:"An action drama about an aged Tamil gangster fighting for rights",hero:"Rajinikanth",heroine:"Radhika Apte",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Kaala",d:"Pa. Ranjith",y:"2018",g:"An action drama about a Dharavi slum lord fighting a politician",hero:"Rajinikanth",heroine:"Easwari Rao",comedian:"None"},
@@ -1344,7 +1406,7 @@ var ROUNDS=[
   {c:"Movie",l:"Tamil",n:"Leo",d:"Lokesh Kanagaraj",y:"2023",g:"A stylish action film about a quiet man with a violent past",hero:"Vijay",heroine:"Trisha",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Ponniyin Selvan Part 1",d:"Mani Ratnam",y:"2022",g:"A grand historical epic about the Chola dynasty's power struggle",hero:"Vikram",heroine:"Aishwarya Rai",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Ponniyin Selvan Part 2",d:"Mani Ratnam",y:"2023",g:"The spectacular conclusion of the Chola dynasty's power struggle",hero:"Vikram",heroine:"Aishwarya Rai",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Raayan",d:"Dhanush",y:"2024",g:"A crime drama about a peace-loving man forced into North Chennai's gang wars to protect his family",hero:"Dhanush",heroine:"Dushara Vijayan",comedian:"None"},
+  {c:"Movie",l:"Tamil",n:"Raayan",d:"Dhanush",y:"2024",g:"A crime drama about a peace-loving man forced into North Chennai's gang wars to protect his family",hero:"None",heroine:"Dushara Vijayan",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Viduthalai Part 2",d:"Vetrimaaran",y:"2024",g:"The gripping conclusion where a constable discovers the truth about a Naxalite leader",hero:"Soori",heroine:"None",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Good Bad Ugly",d:"Adhik Ravichandran",y:"2025",g:"An action comedy about a retired gangster who gets pulled back into chaos",hero:"Ajith Kumar",heroine:"Trisha",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Coolie",d:"Lokesh Kanagaraj",y:"2025",g:"An action thriller about a train coolie with a mysterious and dangerous past",hero:"Rajinikanth",heroine:"Shruti Haasan",comedian:"None"},
@@ -1552,14 +1614,14 @@ var ROUNDS=[
   {c:"Movie",l:"Tamil",n:"Naan Mahaan Alla",d:"Suseenthiran",y:"2010",g:"A hard-hitting action drama about a youth caught in gang violence",hero:"Karthi",heroine:"Kajal Aggarwal",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Pannaiyarum Padminiyum",d:"Lijo Jose Pellissery",y:"2014",g:"A lyrical drama about a landlord's deep bond with his ambassador car",hero:"Vijay Sethupathi",heroine:"Raadhika Sarathkumar",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Kakka Muttai",d:"M. Manikandan",y:"2015",g:"A poignant drama about two slum kids who desperately want to eat a pizza",hero:"Ramesh",heroine:"Vignesh",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Uriyadi",d:"Vijay Kumar",y:"2016",g:"A gritty political thriller about engineering students fighting campus injustice",hero:"Vijay Kumar",heroine:"Raiza Wilson",comedian:"None"},
+  {c:"Movie",l:"Tamil",n:"Uriyadi",d:"Vijay Kumar",y:"2016",g:"A gritty political thriller about engineering students fighting campus injustice",hero:"None",heroine:"Raiza Wilson",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Remo",d:"Bakkiyaraj Kannan",y:"2016",g:"A comedy about a man who disguises himself as a nurse to be near his love",hero:"Sivakarthikeyan",heroine:"Keerthy Suresh",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Merku Thodarchi Malai",d:"Lenin Bharathi",y:"2018",g:"A realistic drama about the hardships of tea estate workers in the hills",hero:"Antony",heroine:"Gayathri Krishnaa",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Pariyerum Perumal",d:"Mari Selvaraj",y:"2018",g:"A powerful drama about a Dalit law student fighting caste discrimination",hero:"Kathir",heroine:"Anandhi",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Kanaa",d:"Arunraja Kamaraj",y:"2018",g:"A sports drama about a girl's dream of becoming a cricketer",hero:"Sivakarthikeyan",heroine:"Aishwarya Rajesh",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Sillu Karupatti",d:"Halitha Shameem",y:"2019",g:"A tender anthology film about love at different stages of life",hero:"Nithyasri",heroine:"Sundarapandian",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Seeru",d:"Rathina Shiva",y:"2020",g:"An action thriller about a cop investigating a murder in his own family",hero:"Jiiva",heroine:"Riya Suman",comedian:"None"},
-  {c:"Movie",l:"Tamil",n:"Oththa Seruppu Size 7",d:"R. Parthiban",y:"2019",g:"A unique one-man thriller about a convict confessing to an unseen judge",hero:"R. Parthiban",heroine:"None",comedian:"None"},
+  {c:"Movie",l:"Tamil",n:"Oththa Seruppu Size 7",d:"R. Parthiban",y:"2019",g:"A unique one-man thriller about a convict confessing to an unseen judge",hero:"None",heroine:"None",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Biskoth",d:"Ramprakash Rayappa",y:"2021",g:"A comedy about a hapless man who accidentally becomes a superstar",hero:"Santhanam",heroine:"Sowkiya",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Jai Bhim",d:"T.J. Gnanavel",y:"2021",g:"A powerful legal drama about a lawyer fighting for tribal rights against police brutality",hero:"Suriya",heroine:"Lijomol Jose",comedian:"None"},
   {c:"Movie",l:"Tamil",n:"Koozhangal",d:"P.S. Vinothraj",y:"2021",g:"A minimalist drama about a father and son walking through a drought-hit landscape",hero:"Karuththadaiyaan",heroine:"None",comedian:"None"},
@@ -1603,6 +1665,27 @@ var ROUNDS=[
 var CUSTOM_MOVIES=[];
 try{var _cm=localStorage.getItem("imposter_custom");if(_cm)CUSTOM_MOVIES=JSON.parse(_cm);}catch(e){}
 function saveCustomMovies(){try{localStorage.setItem("imposter_custom",JSON.stringify(CUSTOM_MOVIES));}catch(e){}}
+
+// ── CUSTOM CATEGORIES ─────────────────────────────────────
+// Each: {name: "Cricket Players", emoji: "🏏", items: [{n:"Sachin Tendulkar", d:"India", g:"Batsman", y:""},...]}
+var CUSTOM_CATS=[];
+try{var _cc=localStorage.getItem("imposter_custom_cats");if(_cc)CUSTOM_CATS=JSON.parse(_cc);}catch(e){}
+function saveCustomCats(){try{localStorage.setItem("imposter_custom_cats",JSON.stringify(CUSTOM_CATS));}catch(e){}}
+
+// Build ROUNDS pool from CUSTOM_CATS for pickRound
+function buildCustomCatRounds(){
+  var arr=[];
+  for(var ci=0;ci<CUSTOM_CATS.length;ci++){
+    var cat=CUSTOM_CATS[ci];
+    for(var ii=0;ii<cat.items.length;ii++){
+      var item=cat.items[ii];
+      arr.push({c:"Custom",l:"Custom",customCat:cat.name,customEmoji:cat.emoji||"🎯",
+               n:item.n,d:item.d||"",g:item.g||"",y:item.y||"",
+               hero:"None",heroine:"None",comedian:"None"});
+    }
+  }
+  return arr;
+}
 
 // ── EXCEL / CSV BULK IMPORT ───────────────────────────────
 function handleXlsxUpload(input) {
@@ -1993,21 +2076,26 @@ function ensurePlayer(name){
   if(!GAME_STATS.players[name]) GAME_STATS.players[name]={games:0,impTimes:0,caught:0,escaped:0,revealed:0,votedOut:0,correctSusp:0};
 }
 function recordGameStats(players,roundHistory,suspicions){
-  // count suspicion accuracy
+  // Suspicion accuracy: a player's suspicion is correct if the player they suspected
+  // was the imposter in ANY round of the game
+  var allImposters={};
+  for(var ri=0;ri<(roundHistory||[]).length;ri++){
+    var rh=roundHistory[ri];
+    for(var xi=0;xi<rh.impIdxs.length;xi++){
+      allImposters[rh.impIdxs[xi]]=true;
+    }
+  }
   var suspRight={};
   if(suspicions){
     for(var pid in suspicions){
       var si=suspicions[pid];
       if(si<0) continue;
-      // check if si was actually an imposter in that round (use last round for simplicity)
-      var lastRh=roundHistory&&roundHistory.length?roundHistory[roundHistory.length-1]:null;
-      if(lastRh&&lastRh.impIdxs.indexOf(si)>=0) suspRight[pid]=true;
+      if(allImposters[si]) suspRight[pid]=true;
     }
   }
   for(var i=0;i<players.length;i++){
     var nm=players[i]; ensurePlayer(nm);
     GAME_STATS.players[nm].games++;
-    // imposter stats from roundHistory
     for(var ri=0;ri<(roundHistory||[]).length;ri++){
       var rh=roundHistory[ri];
       if(rh.impIdxs.indexOf(i)>=0){
@@ -2140,6 +2228,61 @@ function removeCustomMovie(i){
     if(sec)sec.scrollIntoView({behavior:"smooth",block:"center"});
   },60);
 }
+
+// ── CUSTOM CATEGORY MANAGEMENT ───────────────────────────
+function toggleCustomCatPanel(){
+  var panel=document.getElementById("customCatPanel");
+  var ico=document.getElementById("customCatIco");
+  if(!panel)return;
+  var open=panel.style.display!=="none"&&panel.style.display!=="";
+  panel.style.display=open?"none":"block";
+  if(ico)ico.textContent=open?"▼":"▲";
+}
+
+function addCustomCat(){
+  var emoji=(document.getElementById("ccEmoji")||{}).value||"🎯";
+  var name=((document.getElementById("ccName")||{}).value||"").trim();
+  var err=document.getElementById("ccErr");
+  if(err){err.className="amerr";err.textContent="";}
+  if(!name){if(err){err.className="amerr show";err.textContent="⚠️ Category name is required.";}return;}
+  // duplicate check
+  for(var ci=0;ci<CUSTOM_CATS.length;ci++){
+    if(CUSTOM_CATS[ci].name.toLowerCase()===name.toLowerCase()){
+      if(err){err.className="amerr show";err.textContent="❌ Category \""+name+"\" already exists!";}return;
+    }
+  }
+  // collect items
+  var items=[];
+  for(var ii=0;ii<10;ii++){
+    var iEl=document.getElementById("ccItem"+ii);
+    var hEl=document.getElementById("ccHint"+ii);
+    if(!iEl) break;
+    var iname=(iEl.value||"").trim();
+    var ihint=hEl?(hEl.value||"").trim():"";
+    if(iname) items.push({n:iname,d:name,g:ihint||iname,y:""});
+  }
+  if(items.length<2){if(err){err.className="amerr show";err.textContent="⚠️ Add at least 2 items to the category.";}return;}
+  CUSTOM_CATS.push({name:name,emoji:emoji.trim()||"🎯",items:items});
+  saveCustomCats();
+  // auto-enable in cats if not already
+  if(G.ss.cats&&G.ss.cats.indexOf("Custom")<0) G.ss.cats.push("Custom");
+  drawSetup();
+  setTimeout(function(){
+    var sec=document.getElementById("customCatSec");
+    if(sec)sec.scrollIntoView({behavior:"smooth",block:"center"});
+  },60);
+}
+
+function removeCustomCat(i){
+  CUSTOM_CATS.splice(i,1);
+  saveCustomCats();
+  drawSetup();
+}
+
+function editCustomCat(i){
+  // For simplicity open an alert directing user to remove+re-add
+  alert("To edit \""+CUSTOM_CATS[i].name+"\", please remove it and re-add with changes.");
+}
 function toggleAddMovie(){
   var panel=document.getElementById("amPanel");
   var ico=document.getElementById("amIco");
@@ -2197,7 +2340,7 @@ var META={
 };
 var CATS=["Movies","Foods","Locations"]; // category filter labels
 var LANGS=["Tamil","Telugu","Hindi","Malayalam","English"];
-var DIFFS=[["easy","🟢 Easy"],["medium","🟡 Medium"],["hard","🔴 Hard"]];
+var DIFFS=[["medium","🟡 Medium"]];
 var COLORS=["#e74c3c","#e67e22","#2ecc71","#3498db","#9b59b6","#1abc9c","#f39c12","#e91e63","#00bcd4","#8bc34a","#ff5722","#607d8b"];
 var AVS=["🎬","🎭","🎥","🍿","🎞","🎦","📽","🎪","🎨","🃏","🎯","🎲"];
 var TA={n:"Team A",col:"#3b82f6",bg:"rgba(59,130,246,.1)", br:"rgba(59,130,246,.35)",e:"🔵"};
@@ -2326,6 +2469,7 @@ function drawSetup(){
     {key:"Foods",e:"🍛",onCls:"food-on"},
     {key:"Locations",e:"📍",onCls:"loc-on"}
   ];
+  if(CUSTOM_CATS.length>0) catDefs.push({key:"Custom",e:"🎯",onCls:"con"});
   for(var ci2=0;ci2<catDefs.length;ci2++){
     var cd=catDefs[ci2];
     var catOn=(s.cats||[]).indexOf(cd.key)>=0;
@@ -2337,15 +2481,9 @@ function drawSetup(){
   html+="</div>";
   html+="<div class='sec'><p class='slbl'>DIFFICULTY</p>";
   html+="<div class='crow' style='gap:8px'>";
-  for(var di=0;di<DIFFS.length;di++){
-    var dkey=DIFFS[di][0],dlbl=DIFFS[di][1],don=s.diff===dkey;
-    html+="<button class='cb"+(don?" on":"")+"' style='width:auto;padding:0 14px' onclick='setDiff("+di+")'>"+dlbl+"</button>";
-  }
+  html+="<button class='cb on' style='width:auto;padding:0 14px'>🟡 Medium</button>";
   html+="</div>";
-  var dsubtext=s.diff==="easy"?"Imposter gets: Director/Origin + Year":"";
-  dsubtext=s.diff==="medium"?"Imposter gets: Director/Origin only":dsubtext;
-  dsubtext=s.diff==="hard"?"Imposter gets: Genre/vague hint only":dsubtext;
-  html+="<p style='color:#666680;font-size:.74rem;margin-top:8px'>"+dsubtext+"</p>";
+  html+="<p style='color:#666680;font-size:.74rem;margin-top:8px'>Imposter gets: Director/Origin only</p>";
   html+="</div>";
   // options
   html+="<div class='sec'><p class='slbl'>GAME OPTIONS</p>";
@@ -2440,6 +2578,52 @@ function drawSetup(){
   html+="</div>";
   html+="</div>";
 
+  // ── CUSTOM CATEGORIES ──
+  html+="<div class='sec' id='customCatSec'>";
+  html+="<div class='amtoggle' onclick='toggleCustomCatPanel()'>";
+  html+="<p class='slbl' style='margin:0'>🎯 CUSTOM CATEGORIES <span class='snote'>("+CUSTOM_CATS.length+" added)</span></p>";
+  html+="<span class='amtoggle-ico' id='customCatIco'>▼</span>";
+  html+="</div>";
+  html+="<div id='customCatPanel' style='display:none'>";
+  html+="<p style='color:var(--text3);font-size:.72rem;margin-top:8px;margin-bottom:10px'>Create your own categories — Cricket players, TV shows, animals, anything!</p>";
+  // existing categories
+  if(CUSTOM_CATS.length>0){
+    html+="<div class='custom-cat-list'>";
+    for(var cci=0;cci<CUSTOM_CATS.length;cci++){
+      var cc_=CUSTOM_CATS[cci];
+      html+="<div class='custom-cat-item'>";
+      html+="<span style='font-size:1.2rem'>"+(cc_.emoji||"🎯")+"</span>";
+      html+="<span class='custom-cat-name'>"+h(cc_.name)+"</span>";
+      html+="<span class='custom-cat-count'>"+cc_.items.length+" items</span>";
+      html+="<button class='custom-cat-x' onclick='editCustomCat("+cci+")' title='Edit'>✏️</button>";
+      html+="<button class='custom-cat-x' onclick='removeCustomCat("+cci+")' title='Remove'>✕</button>";
+      html+="</div>";
+    }
+    html+="</div>";
+  }
+  // add new category form
+  html+="<div style='margin-top:10px;background:rgba(123,31,162,.04);border:1px solid rgba(123,31,162,.12);border-radius:12px;padding:12px'>";
+  html+="<p style='font-size:.6rem;letter-spacing:.3em;color:var(--text3);font-weight:700;margin-bottom:8px'>NEW CATEGORY</p>";
+  html+="<div style='display:flex;gap:6px;margin-bottom:6px'>";
+  html+="<input class='aminp' id='ccEmoji' placeholder='🎯' maxlength='2' style='width:52px;flex:none;text-align:center;font-size:1.2rem'/>";
+  html+="<input class='aminp' id='ccName' placeholder='Category name (e.g. Cricket Players)' maxlength='40' style='flex:1' onkeydown='if(event.key===\"Enter\")addCustomCatItem()'/>";
+  html+="</div>";
+  html+="<p style='font-size:.66rem;color:var(--text3);margin-bottom:6px'>Items (add at least 5 — players guess which one the imposter has as a clue)</p>";
+  html+="<div id='ccItemsWrap' style='display:flex;flex-direction:column;gap:5px;margin-bottom:8px'>";
+  // 5 empty item rows
+  for(var ii=0;ii<5;ii++){
+    html+="<div style='display:flex;gap:6px'>";
+    html+="<input class='aminp' id='ccItem"+ii+"' placeholder='Item "+(ii+1)+" name' maxlength='50' style='flex:1'/>";
+    html+="<input class='aminp' id='ccHint"+ii+"' placeholder='Clue / hint' maxlength='80' style='flex:1.4'/>";
+    html+="</div>";
+  }
+  html+="</div>";
+  html+="<div class='amerr' id='ccErr'></div>";
+  html+="<button class='amsub' onclick='addCustomCat()'>✅ ADD CATEGORY</button>";
+  html+="</div>";
+  html+="</div>";
+  html+="</div>";
+
   html+="<div class='sec'>";
   html+="<button onclick='drawStats()' style='display:block;width:100%;margin-bottom:10px;padding:10px;border-radius:12px;border:1.5px solid rgba(156,39,176,.25);background:rgba(156,39,176,.06);color:#9C27B0;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.04em'>📊 ALL-TIME STATS</button>";
   html+="<button class='sb' "+(valid?"":"disabled")+" onclick='startGame()'>START GAME 🎲</button>";
@@ -2454,36 +2638,70 @@ function drawSetup(){
   render(html);
 }
 
-// ── SPINNER ──────────────────────────────────────────────
+// ── OFFLINE SPINNER WHEEL ────────────────────────────────
 function drawSpinner(){
-  var html="<div class='page dark'><div class='spwrap'>";
-  html+="<p class='speye'>ROUND "+G.roundNum+" / "+G.cfg.tr+"</p>";
-  html+="<div class='spav' id='spAv' style='background:"+col(0)+"'>"+av(0)+"</div>";
-  html+="<h2 class='spnm' id='spNm' style='color:#666'>"+h(G.players[0])+"</h2>";
-  html+="<div id='spDone' style='display:none'>";
-  html+="<p class='spsb'>speaks first this round!</p>";
-  html+="<button class='tb' id='spGo' style='background:"+col(G.firstIdx)+"' onclick='doPass()'>LET'S GO →</button>";
-  html+="</div></div></div>";
+  var players=G.players;
+  var n=players.length;
+  var firstIdx=G.firstIdx;
+
+  // Build conic-gradient segments
+  var segColors=["#E91E63","#9C27B0","#3F51B5","#00BFA5","#FF5722","#FFB800","#2196F3","#4CAF50","#FF4081","#7C4DFF","#00E5FF","#FFAB40"];
+  var deg=360/n;
+  var gradParts=[];
+  for(var i=0;i<n;i++){
+    var c=segColors[i%segColors.length];
+    gradParts.push(c+" "+(i*deg)+"deg "+((i+1)*deg)+"deg");
+  }
+  var gradient="conic-gradient("+gradParts.join(",")+")";
+
+  var html="<div class='spin-page'>";
+  html+="<div class='spin-wrap'>";
+  html+="<p class='spin-eye'>ROUND "+G.roundNum+" / "+G.cfg.tr+" — WHO SPEAKS FIRST?</p>";
+  html+="<div class='spin-wheel-outer'>";
+  html+="<div class='spin-arrow'>▼</div>";
+  html+="<div class='spin-wheel' id='offSpinWheel' style='background:"+gradient+"'>";
+  // Player name labels positioned around the wheel
+  for(var i=0;i<n;i++){
+    var angle=i*deg+deg/2;
+    var rad=(angle-90)*Math.PI/180;
+    var tx=50+38*Math.cos(rad), ty=50+38*Math.sin(rad);
+    var fontSize=Math.max(8,Math.floor(26/n));
+    html+="<div style='position:absolute;left:"+tx+"%;top:"+ty+"%;transform:translate(-50%,-50%) rotate("+angle+"deg);font-size:"+fontSize+"px;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none;white-space:nowrap;max-width:56px;overflow:hidden;text-overflow:ellipsis'>"+h(players[i].split(' ')[0])+"</div>";
+  }
+  html+="<div class='spin-center'>🎬</div>";
+  html+="</div></div>";
+
+  // Result area — hidden until spin ends
+  html+="<div id='offSpinResult' style='display:none;text-align:center'>";
+  html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
+  html+="<p class='spin-result-name' id='offSpinName' style='color:"+segColors[firstIdx%segColors.length]+"'></p>";
+  html+="<button class='spin-btn' onclick='doPass()'>LET'S GO →</button>";
+  html+="</div>";
+  html+="</div></div>";
+
   render(html);
-  var cnt=0,max=24+rnd(10),cur=0;
-  var iv=setInterval(function(){
-    cur=(cur+1)%G.players.length;
-    var a=document.getElementById("spAv"),n=document.getElementById("spNm");
-    if(!a){clearInterval(iv);return;}
-    a.style.background=col(cur); a.textContent=av(cur);
-    n.textContent=G.players[cur];
-    cnt++;
-    if(cnt>=max){
-      clearInterval(iv);
-      a.style.background=col(G.firstIdx);
-      a.style.boxShadow="0 0 40px "+col(G.firstIdx)+"55";
-      a.textContent=av(G.firstIdx);
-      n.textContent=G.players[G.firstIdx];
-      n.style.color=col(G.firstIdx);
-      var d=document.getElementById("spDone");
-      if(d) d.style.display="block";
-    }
-  },90);
+
+  // Animate — same deterministic logic as online wheel
+  var extraRotations=5+rnd(8);
+  var segAngle=360/n;
+  // To land firstIdx under top arrow: final angle = 360 - (firstIdx*segAngle + segAngle/2)
+  var landAngle=360-(firstIdx*segAngle+segAngle/2);
+  var totalRotation=extraRotations*360+landAngle;
+
+  var wheel=document.getElementById('offSpinWheel');
+  if(wheel){
+    setTimeout(function(){
+      if(!document.getElementById('offSpinWheel')) return;
+      wheel.style.transition="transform 4s cubic-bezier(.17,.67,.12,1)";
+      wheel.style.transform="rotate("+totalRotation+"deg)";
+      setTimeout(function(){
+        var res=document.getElementById('offSpinResult');
+        var nm=document.getElementById('offSpinName');
+        if(nm) nm.textContent=players[firstIdx];
+        if(res) res.style.display="block";
+      }, 4200);
+    }, 400);
+  }
 }
 
 // ── PASS PHONE ───────────────────────────────────────────
@@ -2539,43 +2757,40 @@ function _buildFlipBack(i){
   var inner='';
   if(isImp){
     back.style.cssText='background:#fff1f3;border:2px solid rgba(231,76,60,.4);border-radius:20px';
-    inner+='<div style="text-align:center;width:100%;box-sizing:border-box;padding:0 8px">';
-    inner+='<div style="font-size:2rem;margin-bottom:2px">🕵️</div>';
-    inner+='<p style="font-size:.55rem;color:#999;letter-spacing:.15em;font-weight:700">YOU ARE THE</p>';
-    inner+='<p style="font-family:Bebas Neue,cursive;font-size:2rem;color:#e74c3c;letter-spacing:.05em;line-height:1;margin:2px 0 10px">IMPOSTER</p>';
-    inner+='<div style="background:'+meta.bg+';border:1px solid '+meta.br+';border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;width:100%;box-sizing:border-box">';
+    inner+='<div style="text-align:center;width:100%">';
+    inner+='<div style="font-size:1.8rem;margin-bottom:2px">🕵️</div>';
+    inner+='<p style="font-size:.5rem;color:#999;letter-spacing:.15em;font-weight:700;margin-bottom:1px">YOU ARE THE</p>';
+    inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.8rem;color:#e74c3c;letter-spacing:.05em;line-height:1;margin:0 0 8px">IMPOSTER</p>';
+    inner+='</div>';
+    inner+='<div style="background:'+meta.bg+';border:1px solid '+meta.br+';border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;width:100%;box-sizing:border-box;flex-shrink:0">';
     var diff=G.cfg.diff||"medium";
     if(diff==="easy"){
       inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟢 EASY — TWO CLUES</p>';
-      inner+='<p style="font-size:.8rem;color:var(--text);margin-bottom:3px"><strong>'+meta.lbl+':</strong> '+h(r.d)+'</p>';
-      inner+='<p style="font-size:.8rem;color:var(--text)"><strong>'+(r.l==="Food"?"Desc":"Year")+':</strong> '+(r.l==="Food"?h(r.g):(r.y||""))+'</p>';
+      inner+='<p style="font-size:.82rem;color:var(--text);margin-bottom:3px"><strong>'+meta.lbl+':</strong> '+h(r.d)+'</p>';
+      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+(r.l==="Food"?"Desc":"Year")+':</strong> '+(r.l==="Food"?h(r.g):(r.y||""))+'</p>';
     } else if(diff==="medium"){
-      var ct=G.clueType||"director";
-      var cl=ct==="hero"?"Hero":ct==="heroine"?"Heroine":ct==="comedian"?"Comedian":"Director";
-      var cv=ct==="hero"?r.hero:ct==="heroine"?r.heroine:ct==="comedian"?r.comedian:r.d;
-      if(!cv||cv==="None"){cv=r.d;cl="Director";}
+      var rc=G.resolvedClue||_resolveClue(r,G.clueType);
       inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🟡 MEDIUM — ONE CLUE</p>';
-      inner+='<p style="font-size:.8rem;color:var(--text)"><strong>'+cl+':</strong> '+h(cv)+'</p>';
+      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>'+rc.label+':</strong> '+h(rc.value)+'</p>';
     } else {
       inner+='<p style="font-size:.6rem;color:'+meta.col+';font-weight:700;margin-bottom:6px">🔴 HARD — VAGUE HINT</p>';
-      inner+='<p style="font-size:.8rem;color:var(--text)"><strong>Hint:</strong> '+h(r.g)+'</p>';
+      inner+='<p style="font-size:.82rem;color:var(--text)"><strong>Hint:</strong> '+h(r.g)+'</p>';
     }
     inner+='</div>';
-    inner+='<p style="font-size:.65rem;color:#999;margin-bottom:10px">Bluff! You don\'t know the movie name.</p>';
-    inner+='<button class="db" style="background:linear-gradient(135deg,#C2185B,#E91E63);width:100%" onclick="doneReveal()">UNDERSTOOD ✓</button>';
-    inner+='</div>';
+    inner+='<p style="font-size:.62rem;color:#999;margin-bottom:8px;text-align:center">Bluff! You don\'t know the exact name.</p>';
+    inner+='<button class="db" style="background:linear-gradient(135deg,#C2185B,#E91E63);width:100%;flex-shrink:0" onclick="doneReveal()">UNDERSTOOD ✓</button>';
   } else {
     back.style.cssText='background:'+c+'10;border:2px solid '+c+'55;border-radius:20px';
-    inner+='<div style="text-align:center;padding:0 8px;width:100%;box-sizing:border-box">';
-    inner+='<div style="font-size:2rem;margin-bottom:4px">'+meta.e+'</div>';
-    inner+='<p style="font-size:.58rem;letter-spacing:.3em;color:var(--text3);font-weight:700;margin-bottom:2px">THE MOVIE IS</p>';
-    inner+='<p style="font-family:Bebas Neue,cursive;font-size:2rem;color:'+c+';letter-spacing:.04em;line-height:1.1;margin:6px 0 4px;word-break:break-word">'+h(r.n)+'</p>';
-    inner+='<p style="font-size:.7rem;color:var(--text3);margin-bottom:10px">'+h(r.d)+' · '+r.l+'</p>';
-    inner+='<div style="padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.05);margin-bottom:10px">';
-    inner+='<p style="font-size:.7rem;color:var(--text3)">💡 Discuss — never say the movie name!</p>';
+    inner+='<div style="text-align:center;width:100%;flex-shrink:0">';
+    inner+='<div style="font-size:1.8rem;margin-bottom:4px">'+meta.e+'</div>';
+    inner+='<p style="font-size:.52rem;letter-spacing:.28em;color:var(--text3);font-weight:700;margin-bottom:4px">'+(r.c==="Food"?"THE FOOD IS":r.c==="Location"?"THE LOCATION IS":"THE MOVIE IS")+'</p>';
+    inner+='<p style="font-family:Bebas Neue,cursive;font-size:1.9rem;color:'+c+';letter-spacing:.04em;line-height:1.1;margin:4px 0 3px;word-break:break-word">'+h(r.n)+'</p>';
+    inner+='<p style="font-size:.68rem;color:var(--text3);margin-bottom:10px">'+h(r.d)+(r.l&&r.l!=="Food"&&r.l!=="Location"?' · '+r.l:'')+'</p>';
     inner+='</div>';
-    inner+='<button class="db" style="background:'+c+';width:100%" onclick="doneReveal()">GOT IT ✓</button>';
+    inner+='<div style="padding:7px 10px;border-radius:10px;background:rgba(0,0,0,.05);margin-bottom:10px;flex-shrink:0">';
+    inner+='<p style="font-size:.68rem;color:var(--text3);text-align:center">💡 Discuss — never say the name!</p>';
     inner+='</div>';
+    inner+='<button class="db" style="background:'+c+';width:100%;flex-shrink:0" onclick="doneReveal()">GOT IT ✓</button>';
   }
   back.innerHTML=inner;
 }
@@ -2609,12 +2824,9 @@ function showRole(){
       html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(r.d)+"</span></div>";
       html+="<div class='crow2'><span class='ck'>"+(r.c==="Food"||r.c==="Location"?"Description":"Year")+"</span><span class='cv'>"+(r.c==="Food"||r.c==="Location"?h(r.g):(r.y||""))+"</span></div>";
     } else if(diff==="medium"){
-      var ctype=G.clueType||"director";
-      var cluelbl=ctype==="hero"?"Hero":ctype==="heroine"?"Heroine":ctype==="comedian"?"Comedian":"Director";
-      var clueval=ctype==="hero"?r.hero:ctype==="heroine"?r.heroine:ctype==="comedian"?r.comedian:r.d;
-      if(!clueval||clueval==="None"){clueval=r.d;cluelbl="Director";}
+      var rc=G.resolvedClue||_resolveClue(r,G.clueType);
       html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
-      html+="<div class='crow2'><span class='ck'>"+cluelbl+"</span><span class='cv'>"+h(clueval)+"</span></div>";
+      html+="<div class='crow2'><span class='ck'>"+rc.label+"</span><span class='cv'>"+h(rc.value)+"</span></div>";
     } else {
       html+="<p class='ceye' style='color:#e74c3c'>🔴 HARD — VAGUE HINT</p>";
       html+="<div class='crow2'><span class='ck'>Hint</span><span class='cv'>"+h(r.g)+"</span></div>";
@@ -2642,9 +2854,7 @@ function showRole(){
   }
   html+="</div></div></div>";
 
-  var ccol=document.querySelector(".ccol");
-  if(ccol) ccol.outerHTML=html.replace("<div class='page dark'>","").replace(/<\/div>$/,"");
-  document.getElementById("app").innerHTML=html;
+  render(html);
   addBackBtn('setup');
 }
 
@@ -2673,10 +2883,10 @@ function drawDiscuss(){
   html+="<div class='rules'>";
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
   html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
-  var ct=G.clueType||"director";
+  var rc=G.resolvedClue||_resolveClue(G.round,G.clueType);
   var cluehint=G.cfg.diff==="easy"?"Director + Year":
                G.cfg.diff==="hard"?"Vague hint only":
-               ct==="hero"?"Hero name":ct==="heroine"?"Heroine name":ct==="comedian"?"Comedian name":"Director name";
+               rc.label+" name";
   var difflbl=G.cfg.diff==="easy"?"🟢 Easy":G.cfg.diff==="hard"?"🔴 Hard":"🟡 Medium";
   html+="<p class='rule'>"+(G.teams?"👥 Each team has one enemy imposter — find them! ":"🕵️ ")+difflbl+" · Imposter clue: "+cluehint+"</p></div>";
 
@@ -2837,27 +3047,50 @@ function drawVote(){
   addBackBtn('setup');
 }
 
-// ── GUESS ────────────────────────────────────────────────
+// ── GUESS (BONUS ROUND — overlay on result page) ─────────
 function drawGuess(){
+  // Show a full-screen overlay for the imposter to guess the name
   G.guesses={};
-  var html="<div class='page'><div class='swrap'>";
-  html+="<h2 class='stit'>IMPOSTER GUESS</h2>";
-  html+="<p class='sta'>போலி யூகிக்கவும்</p>";
-  html+="<p class='gsub'>Guess the exact name for <strong style='color:#9C27B0'>+"+PTS.ig+" bonus pts!</strong></p>";
+  var html="<div class='imp-guess-overlay' id='impGuessOverlay'>";
+  html+="<div class='imp-guess-box'>";
+  html+="<div style='font-size:2.5rem;margin-bottom:8px'>🕵️</div>";
+  html+="<p class='imp-guess-title'>IMPOSTER'S CHANCE!</p>";
+  html+="<p class='imp-guess-sub'>You were caught! But you get one shot to guess the "+
+    (G.round&&G.round.c==="Food"?"food item":G.round&&G.round.c==="Location"?"location":"movie name")+
+    " for <strong style='color:#9C27B0'>+"+PTS.ig+" bonus pts</strong>.<br>Pass the device to the imposter!</p>";
   for(var x=0;x<G.impIdxs.length;x++){
     var ii=G.impIdxs[x];
-    html+="<div class='gblk'>";
-    html+="<div class='ghd'>";
-    html+="<div class='vav' style='background:"+col(ii)+"'>"+av(ii)+"</div>";
-    html+="<span style='color:"+COLORS[ii]+";font-size:.9rem;font-weight:700'>"+h(G.players[ii])+"</span>";
-    html+="</div>";
-    html+="<input class='ginp' placeholder='Type your guess…' maxlength='40' oninput='G.guesses["+ii+"]=this.value'/>";
+    html+="<div style='margin-bottom:10px'>";
+    if(G.impIdxs.length>1){
+      html+="<p style='font-size:.72rem;color:"+col(ii)+";font-weight:700;margin-bottom:4px'>"+av(ii)+" "+h(G.players[ii])+"</p>";
+    }
+    html+="<input class='imp-guess-inp' id='offGuess"+ii+"' placeholder='Type your guess…' maxlength='60'/>";
     html+="</div>";
   }
-  html+="<button class='rbtn' onclick='showResult()'>REVEAL RESULT 🎬</button>";
+  html+="<button class='imp-guess-submit' onclick='submitOfflineGuess()'>SUBMIT GUESS 🎬</button>";
+  html+="<button class='imp-guess-skip' onclick='skipOfflineGuess()'>Skip — reveal result</button>";
   html+="</div></div>";
-  render(html);
-  addBackBtn('setup');
+  // Append overlay on top of current page
+  var div=document.createElement('div');
+  div.innerHTML=html;
+  document.body.appendChild(div.firstChild);
+}
+
+function submitOfflineGuess(){
+  for(var x=0;x<G.impIdxs.length;x++){
+    var ii=G.impIdxs[x];
+    var el=document.getElementById("offGuess"+ii);
+    G.guesses[ii]=(el?el.value:"").trim();
+  }
+  var overlay=document.getElementById("impGuessOverlay");
+  if(overlay) overlay.remove();
+  showResult();
+}
+function skipOfflineGuess(){
+  G.guesses={};
+  var overlay=document.getElementById("impGuessOverlay");
+  if(overlay) overlay.remove();
+  showResult();
 }
 
 // ── RESULT ───────────────────────────────────────────────
@@ -3064,6 +3297,26 @@ function drawLeaderboard(){
 }
 
 // ── GAME LOGIC ───────────────────────────────────────────
+// ── CLUE RESOLVER — single source of truth ───────────────
+// Returns {label, value} for the imposter's clue, guaranteed non-null/non-"None"
+function _resolveClue(round, clueType){
+  if(!round) return {label:"Director",value:""};
+  var ct=clueType||"director";
+  var raw;
+  if(ct==="hero")     raw=round.hero;
+  else if(ct==="heroine")  raw=round.heroine;
+  else if(ct==="comedian") raw=round.comedian;
+  else                raw=round.d;
+
+  // Fallback: if the resolved value is missing/None, use director
+  if(!raw||raw==="None"||raw===round.d&&ct!=="director"){
+    // director is always the last resort (it always has a value)
+    if(!raw||raw==="None") return {label:"Director", value:round.d||""};
+  }
+  var label=ct==="hero"?"Hero":ct==="heroine"?"Heroine":ct==="comedian"?"Comedian":"Director";
+  return {label:label, value:raw||round.d||""};
+}
+
 function pickRound(names,cfg,usedList){
   var langs=cfg.langs||LANGS;
   var cats=cfg.cats||["Movies","Foods","Locations"];
@@ -3072,6 +3325,7 @@ function pickRound(names,cfg,usedList){
     if(r.c==="Food") return cats.indexOf("Foods")>=0;
     if(r.c==="Location") return cats.indexOf("Locations")>=0;
     if(r.c==="Movie") return cats.indexOf("Movies")>=0;
+    if(r.c==="Custom") return cats.indexOf("Custom")>=0||cats.indexOf(r.customCat||"")>=0;
     return true;
   }
   var now=Date.now();
@@ -3082,8 +3336,8 @@ function pickRound(names,cfg,usedList){
   // helper: used in current game session?
   function usedThisGame(idx){ return usedList.indexOf(idx)>=0; }
 
-  // MERGED pool: ROUNDS then CUSTOM_MOVIES
-  var ALL_POOL=ROUNDS.concat(CUSTOM_MOVIES);
+  // MERGED pool: ROUNDS then CUSTOM_MOVIES then custom cat items
+  var ALL_POOL=ROUNDS.concat(CUSTOM_MOVIES).concat(buildCustomCatRounds());
   var avail=[];
 
   // Primary pool: not used today AND not used this game
@@ -3092,7 +3346,7 @@ function pickRound(names,cfg,usedList){
     if(usedThisGame(i)) continue;
     if(usedToday(i)) continue;
     if(!catAllowed(r)) continue;
-    if(r.c==="Food"||r.c==="Location"||langs.indexOf(r.l)>=0) avail.push(i);
+    if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
   }
 
   // Fallback 1: today's pool exhausted — ignore daily limit, keep game dedup
@@ -3101,7 +3355,7 @@ function pickRound(names,cfg,usedList){
       var r=ALL_POOL[i];
       if(usedThisGame(i)) continue;
       if(!catAllowed(r)) continue;
-      if(r.c==="Food"||r.c==="Location"||langs.indexOf(r.l)>=0) avail.push(i);
+      if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
     }
   }
 
@@ -3113,7 +3367,7 @@ function pickRound(names,cfg,usedList){
     for(var i=0;i<ALL_POOL.length;i++){
       var r=ALL_POOL[i];
       if(!catAllowed(r)) continue;
-      if(r.c==="Food"||r.c==="Location"||langs.indexOf(r.l)>=0) avail.push(i);
+      if(r.c==="Food"||r.c==="Location"||r.c==="Custom"||langs.indexOf(r.l)>=0) avail.push(i);
     }
   }
   var pick=rnd(avail.length);
@@ -3163,17 +3417,19 @@ function pickRound(names,cfg,usedList){
   G.passOrder=passOrder;  // e.g. [3,0,4,1,2] — random reveal order
   G.passIdx=0;            // index INTO passOrder, not player index directly
   G.firstIdx=passOrder[rnd(names.length)]; // discussion starts at random player
-  // pick random clue type for medium difficulty
+  // pick random clue type for medium difficulty — resolve actual value first to avoid fallbacks
   var r2=ALL_POOL[gi];
   if(G.cfg&&G.cfg.diff==="medium"&&r2.l==="Tamil"){
     var opts=["director"];
-    if(r2.hero&&r2.hero!=="None") opts.push("hero");
-    if(r2.heroine&&r2.heroine!=="None") opts.push("heroine");
-    if(r2.comedian&&r2.comedian!=="None") opts.push("comedian");
+    if(r2.hero&&r2.hero!=="None"&&r2.hero!==r2.d) opts.push("hero");
+    if(r2.heroine&&r2.heroine!=="None"&&r2.heroine!==r2.d) opts.push("heroine");
+    if(r2.comedian&&r2.comedian!=="None"&&r2.comedian!==r2.d) opts.push("comedian");
     G.clueType=opts[rnd(opts.length)];
   } else {
     G.clueType="director";
   }
+  // Store the resolved clue label+value so no fallback logic needed at display time
+  G.resolvedClue=_resolveClue(r2, G.clueType);
 }
 
 function startGame(){
@@ -3215,7 +3471,17 @@ function doneReveal(){
 function doVote(){
   drawVote();
 }
-function lockVotes(){if(G.cfg.pts){drawGuess();}else{G.guesses={};showResult();}}
+function lockVotes(){
+  // Check if imposter was actually caught by votes
+  var tally=[];
+  for(var i=0;i<G.players.length;i++){var c=0;for(var k in G.votes){if(G.votes[k]===i)c++;}tally.push(c);}
+  var maxV=0;for(var i=0;i<tally.length;i++)if(tally[i]>maxV)maxV=tally[i];
+  var top=[];for(var i=0;i<tally.length;i++)if(tally[i]===maxV)top.push(i);
+  var elim=top.length===1?top[0]:-1;
+  var impCaught=false;
+  for(var x=0;x<G.impIdxs.length;x++)if(G.impIdxs[x]===elim){impCaught=true;break;}
+  if(G.cfg.pts&&impCaught){drawGuess();}else{G.guesses={};showResult();}
+}
 function goNext(){
   G.scores=G.newScores;
   G.tscores=G.newTS;
@@ -3496,7 +3762,7 @@ function tog(k){
   else if(k==="pts") G.ss.pts=!G.ss.pts;
   drawSetup();
 }
-function setDiff(di){G.ss.diff=DIFFS[di][0];drawSetup();}
+// difficulty is fixed to medium — setDiff removed
 function togLang(li){
   var l=LANGS[li];
   var idx=G.ss.langs.indexOf(l);
@@ -3872,9 +4138,13 @@ function listenRoom(){
 }
 
 function handleRoomUpdate(data){
+  // Reset NR trigger on every phase transition so next round's majority fires correctly
+  if(data.phase!=="discuss") _nrTriggered=false;
   if(data.phase==="lobby"){
     if(ONLINE.isHost) drawHostLobby(ONLINE.roomCode, data.players, data);
     else drawJoineeLobby(data);
+  } else if(data.phase==="spinner"){
+    drawOnlineSpinner(data);
   } else if(data.phase==="playing"){
     showMyRole(data);
   } else if(data.phase==="discuss"){
@@ -3882,6 +4152,8 @@ function handleRoomUpdate(data){
     drawOnlineDiscuss(data);
   } else if(data.phase==="vote"){
     drawOnlineVote(data);
+  } else if(data.phase==="guess"){
+    drawOnlineGuess(data);
   } else if(data.phase==="result"){
     drawOnlineResult(data);
   } else if(data.phase==="leaderboard"){
@@ -3986,14 +4258,17 @@ function hostStartGame(){
   if(cfg.dbl&&names.length>=5){impIdxs=[pool[0],pool[1]];}
   else{impIdxs=[pool[0]];}
 
-  // pick clue type
+  // pick clue type — only add to opts if value is actually valid (non-null, non-None, non-director-duplicate)
   var clueType="director";
   if(cfg.diff==="medium"&&round.l==="Tamil"){
     var opts=["director"];
-    if(round.hero&&round.hero!=="None")opts.push("hero");
-    if(round.heroine&&round.heroine!=="None")opts.push("heroine");
+    if(round.hero&&round.hero!=="None"&&round.hero!==round.d)opts.push("hero");
+    if(round.heroine&&round.heroine!=="None"&&round.heroine!==round.d)opts.push("heroine");
+    if(round.comedian&&round.comedian!=="None"&&round.comedian!==round.d)opts.push("comedian");
     clueType=opts[Math.floor(Math.random()*opts.length)];
   }
+  // Resolve clue now and write to Firebase so all clients use identical value
+  var resolvedClue=_resolveClue(round,clueType);
 
   // build roles for each player
   var roles={};
@@ -4004,14 +4279,18 @@ function hostStartGame(){
 
   var usedNew=used.concat([gi]);
   var firstIdx=Math.floor(Math.random()*names.length);
+  var spinnerSeed=Math.floor(Math.random()*100000); // deterministic spin for all clients
   ONLINE.roomRef.update({
-    phase:"playing",
+    phase:"spinner",
+    spinnerSeed:spinnerSeed,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
            hero:round.hero||"None",heroine:round.heroine||"None",
            comedian:round.comedian||"None"},
     roles:roles,
     impIdxs:impIdxs,
     clueType:clueType,
+    resolvedClueLabel:resolvedClue.label,
+    resolvedClueValue:resolvedClue.value,
     firstIdx:firstIdx,
     usedRounds:usedNew,
     votes:{},
@@ -4159,9 +4438,8 @@ function showMyRole(data){
       html+="<div class='crow2' style='margin-bottom:7px'><span class='ck'>"+meta.lbl+"</span><span class='cv'>"+h(round.d)+"</span></div>";
       html+="<div class='crow2'><span class='ck'>"+(round.l==="Food"?"Description":"Year")+"</span><span class='cv'>"+(round.l==="Food"?h(round.g):(round.y||""))+"</span></div>";
     } else if(diff==="medium"){
-      var clueval=clueType==="hero"?round.hero:clueType==="heroine"?round.heroine:clueType==="comedian"?round.comedian:round.d;
-      var cluelbl=clueType==="hero"?"Hero":clueType==="heroine"?"Heroine":clueType==="comedian"?"Comedian":"Director";
-      if(!clueval||clueval==="None"){clueval=round.d;cluelbl="Director";}
+      var cluelbl=data.resolvedClueLabel||"Director";
+      var clueval=data.resolvedClueValue||round.d;
       html+="<p class='ceye' style='color:#f39c12'>🟡 MEDIUM — ONE CLUE</p>";
       html+="<div class='crow2'><span class='ck'>"+cluelbl+"</span><span class='cv'>"+h(clueval)+"</span></div>";
     } else {
@@ -4188,20 +4466,98 @@ function showMyRole(data){
   var firstAv=AVS[firstIdx]||"🎬";
   var isFirst=(ONLINE.myIdx===firstIdx);
   html+="<div style='margin:18px 0 8px;padding:12px 16px;border-radius:14px;background:"+firstColor+"22;border:1.5px solid "+firstColor+"55;text-align:center'>";
-  html+="<p style='font-size:.72rem;color:var(--text3);letter-spacing:.08em;margin-bottom:4px'>SPEAKS FIRST</p>";
+  html+="<p style='font-size:.72rem;color:var(--text3);letter-spacing:.08em;margin-bottom:4px'>SPEAKS FIRST THIS ROUND</p>";
   html+="<div style='display:flex;align-items:center;justify-content:center;gap:8px'>";
   html+="<div style='width:28px;height:28px;border-radius:7px;background:"+firstColor+";display:flex;align-items:center;justify-content:center;font-size:.85rem'>"+firstAv+"</div>";
   html+="<span style='font-family:Bebas Neue,cursive;font-size:1.2rem;color:"+firstColor+";letter-spacing:.05em'>"+h(firstName)+"</span>";
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
-  html+="<p style='color:var(--text3);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to move to discussion…</p>";
-  html+="<div class='waiting-anim'><span></span><span></span><span></span></div>";
-
   if(ONLINE.isHost){
     html+="<button class='sb' style='margin-top:20px' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
+  } else {
+    html+="<p style='color:var(--text3);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
+    html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   }
   html+="</div></div></div>";
   render(html);
+}
+
+// ── ONLINE SPINNER (synced across all devices) ──────────
+var _spinnerRan=false;
+function drawOnlineSpinner(data){
+  var players=data.players||[];
+  var n=players.length;
+  var firstIdx=data.firstIdx||0;
+  var spinnerSeed=data.spinnerSeed||42;
+  var isHost=ONLINE.isHost;
+  _spinnerRan=false;
+
+  // Build conic gradient for wheel segments
+  var segColors=["#E91E63","#9C27B0","#3F51B5","#00BFA5","#FF5722","#FFB800","#2196F3","#4CAF50","#FF4081","#7C4DFF","#00E5FF","#FFAB40"];
+  var deg=360/n;
+  var gradient="conic-gradient(";
+  var parts=[];
+  for(var i=0;i<n;i++){
+    var c=segColors[i%segColors.length];
+    parts.push(c+" "+(i*deg)+"deg "+(( i+1)*deg)+"deg");
+  }
+  gradient+=parts.join(",")+")";
+
+  var html="<div class='spin-page' id='spinPage'>";
+  html+="<div class='spin-wrap'>";
+  html+="<p class='spin-eye'>ROUND "+(data.roundNum||1)+" / "+(data.cfg&&data.cfg.tr||3)+" — WHO SPEAKS FIRST?</p>";
+  html+="<div class='spin-wheel-outer'>";
+  html+="<div class='spin-arrow'>▼</div>";
+  html+="<div class='spin-wheel' id='spinWheel' style='background:"+gradient+"'>";
+  // labels around wheel
+  for(var i=0;i<n;i++){
+    var angle=i*deg+deg/2;
+    var rad=(angle-90)*Math.PI/180;
+    var tx=50+38*Math.cos(rad), ty=50+38*Math.sin(rad);
+    html+="<div style='position:absolute;left:"+tx+"%;top:"+ty+"%;transform:translate(-50%,-50%) rotate("+angle+"deg);font-size:"+Math.max(8,Math.floor(26/n))+"px;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis'>"+h(players[i].split(' ')[0])+"</div>";
+  }
+  html+="<div class='spin-center'>🎬</div>";
+  html+="</div></div>";
+  html+="<div id='spinResult' style='display:none'>";
+  html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
+  html+="<p class='spin-result-name' id='spinWinnerName'></p>";
+  if(isHost){
+    html+="<button class='spin-btn' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
+  } else {
+    html+="<p class='spin-waiting'>Waiting for host to start discussion…</p>";
+    html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+  }
+  html+="</div>";
+  html+="</div></div>";
+  render(html);
+
+  // Animate the wheel — deterministic based on spinnerSeed
+  // All devices spin the same number of extra degrees using seeded value
+  var extraRotations=5+((spinnerSeed%8)); // 5–12 full rotations
+  var segAngle=360/n;
+  // Target: firstIdx segment centre should land under the arrow (top = 0 deg offset)
+  // Wheel rotates clockwise; segment i starts at i*segAngle
+  // To land firstIdx under arrow: final angle = 360 - (firstIdx*segAngle + segAngle/2)
+  var landAngle=360-(firstIdx*segAngle+segAngle/2);
+  var totalRotation=extraRotations*360+landAngle;
+
+  var wheel=document.getElementById('spinWheel');
+  if(wheel){
+    // Brief delay for drama, then spin
+    setTimeout(function(){
+      if(!document.getElementById('spinWheel')) return;
+      wheel.style.transition="transform 4s cubic-bezier(.17,.67,.12,1)";
+      wheel.style.transform="rotate("+totalRotation+"deg)";
+      // Show result after spin
+      setTimeout(function(){
+        var res=document.getElementById('spinResult');
+        var nm=document.getElementById('spinWinnerName');
+        if(nm) nm.textContent=players[firstIdx]||"";
+        if(nm) nm.style.color=segColors[firstIdx%segColors.length];
+        if(res) res.style.display="block";
+      }, 4200);
+    }, 600);
+  }
 }
 
 function hostMoveDiscuss(){
@@ -4243,9 +4599,11 @@ function drawOnlineDiscuss(data){
   html+="</div></div>";
 
   // rules hint
+  var onlineClueHint=(data.resolvedClueLabel||"Director")+" name";
   html+="<div class='rules' style='margin-bottom:14px'>";
   html+="<p class='rule'>🗣 Talk about it — never say the name</p>";
-  html+="<p class='rule'>🔍 Watch who seems vague or unsure</p></div>";
+  html+="<p class='rule'>🔍 Watch who seems vague or unsure</p>";
+  html+="<p class='rule'>🟡 Medium · Imposter clue: "+onlineClueHint+"</p></div>";
 
   // ── Next Round Vote panel (if not on last round)
   if(canNextRound){
@@ -4362,23 +4720,29 @@ function hostSkipToNextRound(){
   var clueType="director";
   if((data.cfg&&data.cfg.diff)==="medium"&&round.l==="Tamil"){
     var opts=["director"];
-    if(round.hero&&round.hero!=="None")opts.push("hero");
-    if(round.heroine&&round.heroine!=="None")opts.push("heroine");
+    if(round.hero&&round.hero!=="None"&&round.hero!==round.d)opts.push("hero");
+    if(round.heroine&&round.heroine!=="None"&&round.heroine!==round.d)opts.push("heroine");
+    if(round.comedian&&round.comedian!=="None"&&round.comedian!==round.d)opts.push("comedian");
     clueType=opts[Math.floor(Math.random()*opts.length)];
   }
+  var resolvedClue=_resolveClue(round,clueType);
   var roles={};
   for(var i=0;i<players.length;i++){
     roles[sanitizeKey(players[i])]={isImp:impIdxs.indexOf(i)>=0,idx:i};
   }
   var firstIdx=Math.floor(Math.random()*players.length);
+  var spinnerSeed=Math.floor(Math.random()*100000);
   ONLINE.roomRef.update({
-    phase:"playing",
+    phase:"spinner",
+    spinnerSeed:spinnerSeed,
     roundNum:nextRound,
     discussRound:1,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
            hero:round.hero||"None",heroine:round.heroine||"None",
            comedian:round.comedian||"None"},
-    roles:roles,impIdxs:impIdxs,clueType:clueType,firstIdx:firstIdx,
+    roles:roles,impIdxs:impIdxs,clueType:clueType,
+    resolvedClueLabel:resolvedClue.label,resolvedClueValue:resolvedClue.value,
+    firstIdx:firstIdx,
     usedRounds:used.concat([gi]),
     votes:{},guesses:{},result:null,nextRoundVotes:{}
   }).then(function(){_nrTriggered=false;}).catch(function(e){_nrTriggered=false;});
@@ -4415,7 +4779,7 @@ function drawOnlineVote(data){
     html+="<p style='color:var(--text3);font-size:.82rem;margin-bottom:12px'>Who do you think is the imposter?</p>";
     html+="<div class='vlist'>";
     for(var si=0;si<players.length;si++){
-      if(players[si]===ONLINE.myName) continue;
+      if(si===ONLINE.myIdx) continue;
       var c=COLORS[si],a=AVS[si];
       html+="<button onclick='castOnlineVote("+si+")' style='display:flex;align-items:center;gap:10px;width:100%;padding:14px;background:#F8F0FF;border:2px solid rgba(156,39,176,.2);border-radius:12px;cursor:pointer;transition:all .2s'>";
       html+="<div style='width:32px;height:32px;border-radius:8px;background:"+c+";display:flex;align-items:center;justify-content:center;font-size:1rem'>"+a+"</div>";
@@ -4439,6 +4803,93 @@ function castOnlineVote(si){
   ONLINE.roomRef.child("votes/"+myKey).set(si);
 }
 
+// ── ONLINE GUESS BONUS ───────────────────────────────────
+function drawOnlineGuess(data){
+  var players=data.players||[];
+  var impIdxs=data.impIdxs||[];
+  var round=data.round||{};
+  var result=data.result||{};
+  var guesses=result.guesses||{};
+
+  // Am I an imposter?
+  var myKey=sanitizeKey(ONLINE.myName);
+  var isImp=impIdxs.indexOf(ONLINE.myIdx)>=0;
+  var myGuessSubmitted=guesses.hasOwnProperty(myKey);
+  var totalGuessesExpected=impIdxs.length;
+  var totalGuessesIn=Object.keys(guesses).length;
+
+  var html="<div class='page'><div class='card'>";
+  html+=film();
+  html+="<div class='swrap' style='text-align:center'>";
+  html+="<div style='font-size:2.5rem;margin-bottom:8px'>🕵️</div>";
+  html+="<h2 class='stit'>IMPOSTER BONUS</h2>";
+  html+="<p class='sta'>போலியின் வாய்ப்பு</p>";
+  html+="<p style='color:var(--text3);font-size:.82rem;margin:10px 0 16px'>Imposters were caught! They get one chance to guess the "+(round.c==="Food"?"food item":round.c==="Location"?"location":"movie name")+" for <strong style='color:#9C27B0'>+"+PTS.ig+" bonus pts</strong></p>";
+
+  if(isImp&&!myGuessSubmitted){
+    html+="<div style='background:rgba(233,30,99,.08);border:2px solid rgba(233,30,99,.3);border-radius:16px;padding:16px;margin-bottom:14px'>";
+    html+="<p style='color:#E91E63;font-size:.72rem;font-weight:700;letter-spacing:.08em;margin-bottom:10px'>YOUR GUESS, "+h(ONLINE.myName)+"</p>";
+    html+="<input class='imp-guess-inp' id='onlineGuessInp' placeholder='Type the "+(round.c==="Food"?"food item":round.c==="Location"?"location":"movie name")+"…' maxlength='60' style='margin-bottom:12px'/>";
+    html+="<button class='imp-guess-submit' onclick='submitOnlineGuess()'>SUBMIT GUESS 🎬</button>";
+    html+="<button class='imp-guess-skip' style='display:block;width:100%;margin-top:8px' onclick='skipOnlineGuess()'>Skip</button>";
+    html+="</div>";
+  } else if(isImp&&myGuessSubmitted){
+    html+="<div style='background:rgba(0,191,165,.08);border:1px solid rgba(0,191,165,.3);border-radius:14px;padding:14px;margin-bottom:14px'>";
+    html+="<p style='color:#00BFA5;font-weight:700'>✓ Guess submitted!</p>";
+    html+="<p style='color:var(--text3);font-size:.78rem;margin-top:4px'>Waiting for host to reveal result…</p>";
+    html+="</div>";
+  } else {
+    // Non-imposter
+    html+="<div style='background:rgba(123,31,162,.06);border:1px solid rgba(123,31,162,.15);border-radius:14px;padding:14px;margin-bottom:14px'>";
+    html+="<p style='color:var(--text2);font-size:.85rem'>Pass the device to:<br><strong style='font-size:1.1rem;color:#E91E63'>"+impIdxs.map(function(i){return h(players[i]||"");}).join(" & ")+"</strong></p>";
+    html+="<p style='color:var(--text3);font-size:.75rem;margin-top:6px'>Imposters are entering their guess… ("+totalGuessesIn+"/"+totalGuessesExpected+")</p>";
+    html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+    html+="</div>";
+  }
+
+  if(ONLINE.isHost&&(totalGuessesIn>=totalGuessesExpected)){
+    html+="<button class='sb' onclick='hostRevealFromGuess()'>REVEAL RESULT 🎬</button>";
+  }
+  html+="</div>";
+  html+=film();
+  html+="</div></div>";
+  render(html);
+}
+
+function submitOnlineGuess(){
+  var val=(document.getElementById("onlineGuessInp")||{}).value||"";
+  val=val.trim();
+  var myKey=sanitizeKey(ONLINE.myName);
+  ONLINE.roomRef.child("result/guesses/"+myKey).set(val||"(skip)");
+}
+
+function skipOnlineGuess(){
+  var myKey=sanitizeKey(ONLINE.myName);
+  ONLINE.roomRef.child("result/guesses/"+myKey).set("(skip)");
+}
+
+function hostRevealFromGuess(){
+  var data=ONLINE.gameState;
+  if(!data)return;
+  var result=data.result||{};
+  var guesses=result.guesses||{};
+  var players=data.players||[];
+  var impIdxs=data.impIdxs||[];
+  var round=data.round||{};
+
+  // Convert key-based guesses to idx-based
+  var idxGuesses={};
+  for(var k in guesses){
+    for(var i=0;i<players.length;i++){
+      if(sanitizeKey(players[i])===k){idxGuesses[i]=guesses[k];break;}
+    }
+  }
+  ONLINE.roomRef.update({
+    phase:"result",
+    result:{votedIdx:result.votedIdx,impCaught:result.impCaught,tally:result.tally,impGuesses:idxGuesses}
+  });
+}
+
 function hostShowResult(){
   var data=ONLINE.gameState;
   if(!data)return;
@@ -4446,17 +4897,35 @@ function hostShowResult(){
   var players=data.players||[];
   var impIdxs=data.impIdxs||[];
 
-  // tally votes
+  // tally votes — values stored as player indices
   var tally={};
-  for(var k in votes){var v=votes[k];tally[v]=(tally[v]||0)+1;}
-  var maxV=0,maxIdx=-1;
-  for(var idx in tally){if(tally[idx]>maxV){maxV=tally[idx];maxIdx=parseInt(idx);}}
+  for(var k in votes){
+    var v=parseInt(votes[k]);
+    if(!isNaN(v)) tally[v]=(tally[v]||0)+1;
+  }
+  var maxV=0;
+  for(var idx in tally){if(tally[idx]>maxV) maxV=tally[idx];}
+  // Find all players tied at maxV
+  var topCandidates=[];
+  for(var idx in tally){if(tally[idx]===maxV) topCandidates.push(parseInt(idx));}
+  // Only eliminate if exactly one person leads; a tie = no elimination
+  var maxIdx=topCandidates.length===1?topCandidates[0]:-1;
 
-  var impCaught=impIdxs.indexOf(maxIdx)>=0;
-  ONLINE.roomRef.update({
-    phase:"result",
-    result:{votedIdx:maxIdx,impCaught:impCaught,tally:tally}
-  });
+  var impCaught=maxIdx>=0&&impIdxs.indexOf(maxIdx)>=0;
+  var cfg=data.cfg||{};
+
+  // If imposter caught and points on → show guess phase
+  if(impCaught&&cfg.pts!==false){
+    ONLINE.roomRef.update({
+      phase:"guess",
+      result:{votedIdx:maxIdx,impCaught:impCaught,tally:tally,guesses:{}}
+    });
+  } else {
+    ONLINE.roomRef.update({
+      phase:"result",
+      result:{votedIdx:maxIdx,impCaught:impCaught,tally:tally}
+    });
+  }
 }
 
 // ── ONLINE RESULT ────────────────────────────────────────
@@ -4478,8 +4947,26 @@ function drawOnlineResult(data){
   } else {
     html+="<div class='lbox'><p style='font-size:2.5rem'>😈</p><p class='rhead'>IMPOSTER WINS!</p><p class='rta'>போலி வென்றது</p></div>";
   }
-  html+="<p style='color:var(--text3);font-size:.82rem;margin-bottom:12px'>Most votes: <strong style='color:var(--text)'>"+h(players[votedIdx]||"?")+"</strong></p>";
+  html+="<p style='color:var(--text3);font-size:.82rem;margin-bottom:12px'>Most votes: <strong style='color:var(--text)'>"+(votedIdx>=0?h(players[votedIdx]||"?"):"TIE — no one eliminated")+"</strong></p>";
   html+="<p style='color:var(--text3);font-size:.82rem;margin-bottom:6px'>Imposters were: <strong style='color:#E91E63'>"+impIdxs.map(function(i){return players[i];}).join(" & ")+"</strong></p>";
+  // Show imposter guess result if available
+  var impGuesses=result.impGuesses||{};
+  if(impCaught&&Object.keys(impGuesses).length>0){
+    html+="<div style='background:rgba(156,39,176,.06);border:1px solid rgba(156,39,176,.2);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:left'>";
+    html+="<p style='font-size:.6rem;letter-spacing:.3em;color:var(--text3);font-weight:700;margin-bottom:8px'>🕵️ IMPOSTER GUESSED...</p>";
+    for(var ig in impGuesses){
+      var gi2=parseInt(ig);
+      var gval=impGuesses[ig];
+      var correct=round&&gval&&gval.toLowerCase().trim()===round.n.toLowerCase().trim();
+      html+="<div style='display:flex;align-items:center;gap:8px;margin-bottom:5px'>";
+      html+="<div class='vav' style='background:"+COLORS[gi2%COLORS.length]+";width:24px;height:24px;font-size:.75rem'>"+AVS[gi2%AVS.length]+"</div>";
+      html+="<span style='font-size:.84rem;font-weight:600;color:var(--text2)'>"+h(players[gi2]||"?")+"</span>";
+      html+="<span style='font-size:.78rem;color:var(--text3)'>guessed:</span>";
+      html+="<span style='font-size:.84rem;font-weight:700;color:"+(correct?"#2ecc71":"#e74c3c")+";flex:1'>"+h(gval)+" "+(correct?"✅ +"+PTS.ig+" pts!":"❌")+"</span>";
+      html+="</div>";
+    }
+    html+="</div>";
+  }
   html+="<div class='rvbox' style='border-color:rgba(232,160,32,.4);margin:14px 0'>";
   html+="<p class='rveye' style='color:#e8a020'>THE "+round.c.toUpperCase()+" WAS</p>";
   html+="<p class='rvnm'>"+h(round.n)+"</p>";
