@@ -2510,9 +2510,6 @@ function film(){
 
 // ── RENDER ───────────────────────────────────────────────
 function render(html){
-  // Remove any sticky buttons from previous screen
-  var old=document.getElementById('stickyDiscussBtn');
-  if(old) old.remove();
   removeBackBtn();
   document.getElementById("app").innerHTML=html;
 }
@@ -4751,6 +4748,8 @@ function drawHostLobby(code, players, data){
   html+="</div>";
 
   var canStart=filledCount>=3;
+  // DEBUG
+  console.log("drawHostLobby: filledCount="+filledCount+" players="+JSON.stringify(players));
   html+="<button class='sb' style='margin-top:14px' "+(canStart?"":"disabled")+" onclick='hostStartGame()'>START GAME &#x1F3AC;</button>";
   if(!canStart){
     html+="<p style='text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px'>Need at least 3 players ("+filledCount+" joined)</p>";
@@ -4853,16 +4852,20 @@ function _genLocList(roundName){
 
 function hostStartGame(){
   var data=ONLINE.gameState;
-  if(!data)return;
-  // Only use filled slots
+  if(!data){alert("ERROR: No game state");return;}
   var names=(data.players||[]).filter(function(n){return n&&n.trim();});
-  if(names.length<3){alert("Need at least 3 players!");return;}
+  if(names.length<3){alert("Need at least 3 players! Found: "+names.length);return;}
   var cfg=data.cfg;
+  if(!cfg){alert("ERROR: No cfg in Firebase data");return;}
+  alert("Starting game...\nPlayers: "+names.length+"\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
 
   // pick round using shared helper
   var used=data.usedRounds||[];
   var picked=_onlinePick(cfg,used);
-  if(!picked){alert("No rounds available for the selected filters!");return;}
+  if(!picked){
+    alert("No rounds available!\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
+    return;
+  }
   var gi=picked.gi, round=picked.round;
 
   // pick imposters from full player list (indices match ONLINE.myIdx)
@@ -4918,7 +4921,7 @@ function hostStartGame(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:allPlayers,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
@@ -5153,20 +5156,28 @@ function showMyRole(data){
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
   if(!ONLINE.isHost){
-    html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
+    html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to spin the wheel…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+  } else {
+    html+="<div style='margin-top:20px;padding:0 0 40px'>";
+    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>SPIN WHEEL 🎡</button>";
+    html+="</div>";
   }
   html+="</div></div></div>";
   render(html);
 
-  // Add sticky START DISCUSSION button directly to body — outside scroll container
-  // position:fixed only works reliably when not inside overflow:auto parent
+  // Attach click handler after render
   if(ONLINE.isHost){
-    var stickyBtn=document.createElement('div');
-    stickyBtn.id='stickyDiscussBtn';
-    stickyBtn.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,#0a0519 60%,transparent);z-index:99999;box-sizing:border-box';
-    stickyBtn.innerHTML='<button style="width:100%;padding:16px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.2rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5)" onclick="hostMoveDiscuss()">START DISCUSSION 💬</button>';
-    document.body.appendChild(stickyBtn);
+    var discBtn=document.getElementById('startDiscBtn');
+    if(discBtn){
+      discBtn.addEventListener('touchend',function(e){
+        e.preventDefault();
+        hostMoveToSpinner();
+      });
+      discBtn.addEventListener('click',function(){
+        hostMoveToSpinner();
+      });
+    }
   }
 }
 var _spinnerRan=false;
@@ -5221,9 +5232,9 @@ function drawOnlineSpinner(data){
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
   html+="<p class='spin-result-name' id='spinWinnerName' style='color:"+firstColorSpin+"'>"+h(firstName)+"</p>";
   if(isHost){
-    html+="<button class='spin-btn' onclick='hostMoveToRoles()'>REVEAL ROLES 🎬</button>";
+    html+="<button class='spin-btn' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
   } else {
-    html+="<p class='spin-waiting'>Waiting for host to reveal roles…</p>";
+    html+="<p class='spin-waiting'>Waiting for host to start discussion…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   }
   html+="</div>";
@@ -5259,14 +5270,32 @@ function drawOnlineSpinner(data){
 }
 
 function hostMoveToRoles(){
-  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
+  // Called from spinner — but now spinner comes AFTER cards, so this is unused in new flow
+  // Kept for compatibility
+  if(!ONLINE.roomRef) return;
   ONLINE.roomRef.update({phase:"playing"});
 }
 
+function hostMoveToSpinner(){
+  // Called after all players have seen their cards — show spinner to pick first speaker
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
+  var btn=document.getElementById('startDiscBtn');
+  if(btn){btn.textContent='Loading…';btn.disabled=true;}
+  ONLINE.roomRef.update({phase:"spinner"}).catch(function(e){
+    alert("Error: "+e.message);
+    if(btn){btn.textContent='SPIN WHEEL 🎡';btn.disabled=false;}
+  });
+}
+
 function hostMoveDiscuss(){
-  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
-  ONLINE.roomRef.update({phase:"discuss"}).catch(function(e){
-    alert("Error starting discussion: "+e.message);
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
+  var btn=document.getElementById('startDiscBtn');
+  if(btn){btn.textContent='Starting…';btn.disabled=true;}
+  ONLINE.roomRef.update({phase:"discuss"}).then(function(){
+    console.log("discuss phase set");
+  }).catch(function(e){
+    alert("Firebase error: "+e.message);
+    if(btn){btn.textContent='START DISCUSSION 💬';btn.disabled=false;}
   });
 }
 
@@ -5287,6 +5316,7 @@ function drawOnlineDiscuss(data){
   var firstColor=COLORS[firstIdx]||"#E91E63";
   var firstAv=AVS[firstIdx]||"🎬";
   var isFirstMe=(ONLINE.myIdx===firstIdx);
+  var round=data.round||{};
 
   var html="<div class='page'><div class='card'>";
   html+=film();
@@ -5455,7 +5485,7 @@ function hostSkipToNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
@@ -5884,7 +5914,7 @@ function hostNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
 
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
