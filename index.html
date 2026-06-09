@@ -4921,7 +4921,7 @@ function hostStartGame(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:allPlayers,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
@@ -5155,18 +5155,28 @@ function showMyRole(data){
   html+="<span style='font-family:Bebas Neue,cursive;font-size:1.2rem;color:"+firstColor+";letter-spacing:.05em'>"+h(firstName)+"</span>";
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
-  html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
-  html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
-  if(ONLINE.isHost){
-    html+="<button class='sb' style='margin-top:20px' id='startDiscBtn'>START DISCUSSION 💬</button>";
+  if(!ONLINE.isHost){
+    html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to spin the wheel…</p>";
+    html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+  } else {
+    html+="<div style='margin-top:20px;padding:0 0 40px'>";
+    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>SPIN WHEEL 🎡</button>";
+    html+="</div>";
   }
   html+="</div></div></div>";
   render(html);
+
+  // Attach click handler after render
   if(ONLINE.isHost){
     var discBtn=document.getElementById('startDiscBtn');
     if(discBtn){
-      discBtn.addEventListener('touchend',function(e){e.preventDefault();hostMoveDiscuss();});
-      discBtn.addEventListener('click',function(){hostMoveDiscuss();});
+      discBtn.addEventListener('touchend',function(e){
+        e.preventDefault();
+        hostMoveToSpinner();
+      });
+      discBtn.addEventListener('click',function(){
+        hostMoveToSpinner();
+      });
     }
   }
 }
@@ -5475,7 +5485,7 @@ function hostSkipToNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
@@ -5904,7 +5914,7 @@ function hostNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
 
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
@@ -6096,9 +6106,19 @@ loadSavedNames();
 // ── PWA — SERVICE WORKER + INSTALL BANNER ─────────────────
 (function(){
   // Register external service worker (sw.js must be in same folder on GitHub)
+  // Force clear old service worker caches so updates always load fresh
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js', {scope:'./'})
-      .catch(function(){/* silent fail if sw.js not found */});
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){r.unregister();});
+    });
+    if('caches' in window){
+      caches.keys().then(function(keys){
+        keys.forEach(function(k){caches.delete(k);});
+      });
+    }
+    setTimeout(function(){
+      navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(function(){});
+    },1000);
   }
 
   // Install Banner — Android Chrome fires this automatically
