@@ -5160,7 +5160,7 @@ function showMyRole(data){
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   } else {
     html+="<div style='margin-top:20px;padding:0 0 40px'>";
-    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>SPIN WHEEL 🎡</button>";
+    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>START DISCUSSION 💬</button>";
     html+="</div>";
   }
   html+="</div></div></div>";
@@ -5172,10 +5172,10 @@ function showMyRole(data){
     if(discBtn){
       discBtn.addEventListener('touchend',function(e){
         e.preventDefault();
-        hostMoveToSpinner();
+        hostMoveDiscuss();
       });
       discBtn.addEventListener('click',function(){
-        hostMoveToSpinner();
+        hostMoveDiscuss();
       });
     }
   }
@@ -5232,7 +5232,7 @@ function drawOnlineSpinner(data){
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
   html+="<p class='spin-result-name' id='spinWinnerName' style='color:"+firstColorSpin+"'>"+h(firstName)+"</p>";
   if(isHost){
-    html+="<button class='spin-btn' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
+    html+="<button class='spin-btn' onclick='hostMoveVote()'>🗳 START VOTING</button>";
   } else {
     html+="<p class='spin-waiting'>Waiting for host to start discussion…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
@@ -5384,6 +5384,7 @@ function drawOnlineDiscuss(data){
 
   // Manual voting button (always available for host)
   if(ONLINE.isHost){
+    html+="<button class='spin-btn' style='width:100%;margin-bottom:10px' onclick='hostMoveToSpinner()'>🎡 SPIN — WHO SPEAKS FIRST?</button>";
     html+="<button class='vbtn' onclick='hostMoveVote()' style='margin-top:4px'>🗳 START VOTING NOW</button>";
     html+="<button onclick='hostOnlineImposterWon()' style='display:block;width:100%;margin-top:10px;padding:12px;border-radius:14px;border:1.5px solid rgba(231,76,60,.5);background:rgba(231,76,60,.08);color:#e74c3c;font-size:.82rem;font-weight:700;cursor:pointer;touch-action:manipulation'>🕵️ IMPOSTER REVEALED THE MOVIE</button>";
   } else {
