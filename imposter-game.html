@@ -5303,6 +5303,7 @@ function drawOnlineDiscuss(data){
   var firstColor=COLORS[firstIdx]||"#E91E63";
   var firstAv=AVS[firstIdx]||"🎬";
   var isFirstMe=(ONLINE.myIdx===firstIdx);
+  var round=data.round||{};
 
   var html="<div class='page'><div class='card'>";
   html+=film();
