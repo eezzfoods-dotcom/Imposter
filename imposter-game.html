@@ -5384,7 +5384,6 @@ function drawOnlineDiscuss(data){
 
   // Manual voting button (always available for host)
   if(ONLINE.isHost){
-    html+="<button class='spin-btn' style='width:100%;margin-bottom:10px' onclick='hostMoveToSpinner()'>🎡 SPIN — WHO SPEAKS FIRST?</button>";
     html+="<button class='vbtn' onclick='hostMoveVote()' style='margin-top:4px'>🗳 START VOTING NOW</button>";
     html+="<button onclick='hostOnlineImposterWon()' style='display:block;width:100%;margin-top:10px;padding:12px;border-radius:14px;border:1.5px solid rgba(231,76,60,.5);background:rgba(231,76,60,.08);color:#e74c3c;font-size:.82rem;font-weight:700;cursor:pointer;touch-action:manipulation'>🕵️ IMPOSTER REVEALED THE MOVIE</button>";
   } else {
