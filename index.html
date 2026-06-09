@@ -4565,6 +4565,8 @@ function onTogCat(key){
   if(idx>=0){if(cats.length>1)cats.splice(idx,1);}
   else cats.push(key);
   G.ss.cats=cats;
+  // Update Firebase cfg so hostStartGame uses correct categories
+  if(ONLINE.roomRef) ONLINE.roomRef.child("cfg/cats").set(cats);
   drawOnlineSetup();
 }
 function onTogEra(key){
@@ -4573,10 +4575,15 @@ function onTogEra(key){
   if(idx>=0){if(eras.length>1)eras.splice(idx,1);}
   else eras.push(key);
   G.ss.eras=eras;
+  // Update Firebase cfg so hostStartGame uses correct eras
+  if(ONLINE.roomRef) ONLINE.roomRef.child("cfg/eras").set(eras);
   drawOnlineSetup();
 }
-function onSetTR(r){G.ss.tr=r;drawOnlineSetup();}
-function onSetDiff(d){G.ss.diff=d;drawOnlineSetup();}
+function onSetTR(r){
+  G.ss.tr=r;
+  if(ONLINE.roomRef) ONLINE.roomRef.child("cfg/tr").set(r);
+  drawOnlineSetup();
+}
 
 function hostCreateRoom(){
   var s=G.ss;
@@ -5059,7 +5066,14 @@ function showMyRole(data){
   var isLocation=round.c==="Location";
   var isFood=round.c==="Food";
 
-  var html="<div class='page dark'><div class='ccol'><div class='fi' style='width:100%'>";
+  var html="<div class='page dark' style='align-items:flex-start;overflow-y:auto;padding-bottom:0'>";
+  // Sticky START DISCUSSION button at bottom for host — always visible regardless of content length
+  if(ONLINE.isHost){
+    html+="<div style='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,rgba(10,5,25,.95) 60%,transparent);z-index:9999'>";
+    html+="<button class='sb' style='width:100%;margin:0' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
+    html+="</div>";
+  }
+  html+="<div class='ccol' style='padding-bottom:"+(ONLINE.isHost?"90px":"20px")+";width:100%'><div class='fi' style='width:100%'>";
   html+="<div class='bav' style='border:3px solid "+c+";background:rgba(156,39,176,.12);width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 14px'>"+a+"</div>";
   html+="<p style='font-family:Bebas Neue,cursive;font-size:2rem;color:"+c+";letter-spacing:.06em;text-align:center;margin-bottom:20px'>"+h(myName)+"</p>";
 
@@ -5139,10 +5153,8 @@ function showMyRole(data){
   html+="<span style='font-family:Bebas Neue,cursive;font-size:1.2rem;color:"+firstColor+";letter-spacing:.05em'>"+h(firstName)+"</span>";
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
-  if(ONLINE.isHost){
-    html+="<button class='sb' style='margin-top:20px' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
-  } else {
-    html+="<p style='color:var(--text3);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
+  if(!ONLINE.isHost){
+    html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   }
   html+="</div></div></div>";
