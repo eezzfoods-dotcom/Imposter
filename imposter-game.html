@@ -4751,6 +4751,8 @@ function drawHostLobby(code, players, data){
   html+="</div>";
 
   var canStart=filledCount>=3;
+  // DEBUG
+  console.log("drawHostLobby: filledCount="+filledCount+" players="+JSON.stringify(players));
   html+="<button class='sb' style='margin-top:14px' "+(canStart?"":"disabled")+" onclick='hostStartGame()'>START GAME &#x1F3AC;</button>";
   if(!canStart){
     html+="<p style='text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px'>Need at least 3 players ("+filledCount+" joined)</p>";
@@ -4853,15 +4855,12 @@ function _genLocList(roundName){
 
 function hostStartGame(){
   var data=ONLINE.gameState;
-  if(!data)return;
-  // Only use filled slots
+  if(!data){alert("ERROR: No game state");return;}
   var names=(data.players||[]).filter(function(n){return n&&n.trim();});
-  if(names.length<3){alert("Need at least 3 players!");return;}
+  if(names.length<3){alert("Need at least 3 players! Found: "+names.length);return;}
   var cfg=data.cfg;
-
-  // DEBUG — remove after testing
-  console.log("hostStartGame cfg:", JSON.stringify(cfg));
-  console.log("players:", names.length);
+  if(!cfg){alert("ERROR: No cfg in Firebase data");return;}
+  alert("Starting game...\nPlayers: "+names.length+"\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
 
   // pick round using shared helper
   var used=data.usedRounds||[];
@@ -5167,12 +5166,19 @@ function showMyRole(data){
   render(html);
 
   // Add sticky START DISCUSSION button directly to body — outside scroll container
-  // position:fixed only works reliably when not inside overflow:auto parent
   if(ONLINE.isHost){
+    var old2=document.getElementById('stickyDiscussBtn');
+    if(old2) old2.remove();
     var stickyBtn=document.createElement('div');
     stickyBtn.id='stickyDiscussBtn';
-    stickyBtn.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,#0a0519 60%,transparent);z-index:99999;box-sizing:border-box';
-    stickyBtn.innerHTML='<button style="width:100%;padding:16px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.2rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5)" onclick="hostMoveDiscuss()">START DISCUSSION 💬</button>';
+    stickyBtn.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,#0a0519 80%,transparent);z-index:99999;box-sizing:border-box';
+    var btn=document.createElement('button');
+    btn.textContent='START DISCUSSION 💬';
+    btn.style.cssText='width:100%;padding:16px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.2rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);-webkit-tap-highlight-color:transparent';
+    btn.addEventListener('click', function(){
+      hostMoveDiscuss();
+    });
+    stickyBtn.appendChild(btn);
     document.body.appendChild(stickyBtn);
   }
 }
