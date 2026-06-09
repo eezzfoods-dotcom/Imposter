@@ -4748,9 +4748,7 @@ function drawHostLobby(code, players, data){
   html+="</div>";
 
   var canStart=filledCount>=3;
-  // DEBUG
-  console.log("drawHostLobby: filledCount="+filledCount+" players="+JSON.stringify(players));
-  html+="<button class='sb' style='margin-top:14px' "+(canStart?"":"disabled")+" onclick='hostStartGame()'>START GAME &#x1F3AC;</button>";
+  html+="<button class='sb' style='margin-top:14px' id='startGameBtn' "+(canStart?"":"disabled")+" onclick='onStartGameClick()'>START GAME 🎬</button>";
   if(!canStart){
     html+="<p style='text-align:center;color:var(--text3);font-size:.72rem;margin-top:8px'>Need at least 3 players ("+filledCount+" joined)</p>";
   } else {
@@ -4850,53 +4848,49 @@ function _genLocList(roundName){
   return [roundName].concat(decoys.slice(0,14)).sort();
 }
 
+function onStartGameClick(){
+  var btn=document.getElementById('startGameBtn');
+  if(btn){btn.textContent='Starting…';btn.disabled=true;}
+  try{
+    hostStartGame();
+  }catch(e){
+    alert("Error: "+e.message);
+    if(btn){btn.textContent='START GAME 🎬';btn.disabled=false;}
+  }
+}
+
 function hostStartGame(){
   var data=ONLINE.gameState;
-  if(!data){alert("ERROR: No game state");return;}
-  var names=(data.players||[]).filter(function(n){return n&&n.trim();});
-  if(names.length<3){alert("Need at least 3 players! Found: "+names.length);return;}
-  var cfg=data.cfg;
-  if(!cfg){alert("ERROR: No cfg in Firebase data");return;}
-
-  // pick round using shared helper
-  var used=data.usedRounds||[];
-  var picked=_onlinePick(cfg,used);
-  if(!picked){
-    alert("No rounds available!\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
-    return;
-  }
-  var gi=picked.gi, round=picked.round;
-
-  // pick imposters from full player list (indices match ONLINE.myIdx)
+  if(!data){alert("ERROR: No game state. Please wait and try again.");return;}
   var allPlayers=data.players||[];
   var filledSlots=[];
   for(var i=0;i<allPlayers.length;i++){
     if(allPlayers[i]&&allPlayers[i].trim()) filledSlots.push(i);
   }
-  if(filledSlots.length<3){alert("Need at least 3 players!");return;}
+  if(filledSlots.length<3){alert("Need at least 3 players! Currently: "+filledSlots.length);return;}
+  var cfg=data.cfg;
+  if(!cfg){alert("ERROR: Room config missing. Please exit and create a new room.");return;}
+
+  // pick round using shared helper
+  var used=data.usedRounds||[];
+  var picked=_onlinePick(cfg,used);
+  if(!picked){
+    alert("No rounds available for selected categories/languages!\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
+    return;
+  }
+  var gi=picked.gi, round=picked.round;
 
   var impIdxs=[];
-  // Round-robin: track who has been imposter to ensure fair rotation
   var usedImps=data.usedImps||[];
   var lastImp=data.lastImp!=null?data.lastImp:-1;
   var freshPool=filledSlots.filter(function(i){return usedImps.indexOf(i)<0;});
-  if(!freshPool.length){
-    // Everyone has had a turn — start new cycle
-    usedImps=[];
-    freshPool=filledSlots.slice();
-  }
-  // Avoid back-to-back same imposter
+  if(!freshPool.length){usedImps=[];freshPool=filledSlots.slice();}
   var noRepeat=freshPool.filter(function(i){return i!==lastImp;});
   var finalPool=noRepeat.length>=1?noRepeat:freshPool;
   finalPool.sort(function(){return Math.random()-.5;});
-  if(cfg.dbl&&filledSlots.length>=5){
-    impIdxs=[finalPool[0],finalPool[1]||freshPool[0]];
-  } else {
-    impIdxs=[finalPool[0]];
-  }
+  impIdxs=cfg.dbl&&filledSlots.length>=5?[finalPool[0],finalPool[1]||freshPool[0]]:[finalPool[0]];
   var newUsedImps=usedImps.concat(impIdxs);
 
-  // pick clue type
   var clueType="director";
   if(cfg.diff==="medium"&&round.l==="Tamil"){
     var opts=["director"];
@@ -4907,33 +4901,32 @@ function hostStartGame(){
   }
   var resolvedClue=_resolveClue(round,clueType);
 
-  // build roles keyed by sanitized player name (slot index as idx)
   var roles={};
   for(var i=0;i<allPlayers.length;i++){
     if(!allPlayers[i]||!allPlayers[i].trim()) continue;
-    var isImpFlag=impIdxs.indexOf(i)>=0;
-    roles[sanitizeKey(allPlayers[i])]={isImp:isImpFlag,idx:i};
+    roles[sanitizeKey(allPlayers[i])]={isImp:impIdxs.indexOf(i)>=0,idx:i};
   }
 
-  var usedNew=used.concat([gi]);
   var firstIdx=filledSlots[Math.floor(Math.random()*filledSlots.length)];
   var spinnerSeed=Math.floor(Math.random()*100000);
-  var locList=round.c==="Location"?_genLocList(round.n):null;
-  ONLINE.roomRef.update({
+  // locList: array of 15 location names, or "none" string to avoid Firebase null issues
+  var locList=round.c==="Location"?_genLocList(round.n):[];
+
+  var update={
     phase:"playing",
     spinnerSeed:spinnerSeed,
     players:allPlayers,
-    round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
+    round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y||"",g:round.g,
            hero:round.hero||"None",heroine:round.heroine||"None",
            comedian:round.comedian||"None"},
     roles:roles,
     impIdxs:impIdxs,
     clueType:clueType,
-    resolvedClueLabel:resolvedClue.label,
-    resolvedClueValue:resolvedClue.value,
+    resolvedClueLabel:resolvedClue.label||"",
+    resolvedClueValue:resolvedClue.value||"",
     locList:locList,
     firstIdx:firstIdx,
-    usedRounds:usedNew,
+    usedRounds:used.concat([gi]),
     usedImps:newUsedImps,
     lastImp:impIdxs[0],
     votes:{},
@@ -4941,6 +4934,12 @@ function hostStartGame(){
     nextRoundVotes:{},
     roundHistory:[],
     discussRound:1
+  };
+
+  ONLINE.roomRef.update(update).then(function(){
+    console.log("Game started successfully");
+  }).catch(function(e){
+    alert("Firebase error starting game: "+e.message);
   });
 }
 
