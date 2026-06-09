@@ -4921,7 +4921,7 @@ function hostStartGame(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:allPlayers,
     round:{n:round.n,c:round.c,l:round.l,d:round.d,y:round.y,g:round.g,
@@ -5155,18 +5155,18 @@ function showMyRole(data){
   html+="<span style='font-family:Bebas Neue,cursive;font-size:1.2rem;color:"+firstColor+";letter-spacing:.05em'>"+h(firstName)+"</span>";
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
-  html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
+  html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to spin the wheel…</p>";
   html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   if(ONLINE.isHost){
-    html+="<button class='sb' style='margin-top:20px' id='startDiscBtn'>START DISCUSSION 💬</button>";
+    html+="<button class='sb' style='margin-top:20px;background:linear-gradient(135deg,#FF8C00,#E91E63)' id='spinWheelBtn'>SPIN WHEEL 🎡</button>";
   }
   html+="</div></div></div>";
   render(html);
   if(ONLINE.isHost){
-    var discBtn=document.getElementById('startDiscBtn');
-    if(discBtn){
-      discBtn.addEventListener('touchend',function(e){e.preventDefault();hostMoveDiscuss();});
-      discBtn.addEventListener('click',function(){hostMoveDiscuss();});
+    var spinBtn=document.getElementById('spinWheelBtn');
+    if(spinBtn){
+      spinBtn.addEventListener('touchend',function(e){e.preventDefault();hostMoveToSpinner();});
+      spinBtn.addEventListener('click',function(){hostMoveToSpinner();});
     }
   }
 }
@@ -5267,9 +5267,8 @@ function hostMoveToRoles(){
 }
 
 function hostMoveToSpinner(){
-  // Called after all players have seen their cards — show spinner to pick first speaker
   if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
-  var btn=document.getElementById('startDiscBtn');
+  var btn=document.getElementById('spinWheelBtn');
   if(btn){btn.textContent='Loading…';btn.disabled=true;}
   ONLINE.roomRef.update({phase:"spinner"}).catch(function(e){
     alert("Error: "+e.message);
@@ -5279,13 +5278,8 @@ function hostMoveToSpinner(){
 
 function hostMoveDiscuss(){
   if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
-  var btn=document.getElementById('startDiscBtn');
-  if(btn){btn.textContent='Starting…';btn.disabled=true;}
-  ONLINE.roomRef.update({phase:"discuss"}).then(function(){
-    console.log("discuss phase set");
-  }).catch(function(e){
+  ONLINE.roomRef.update({phase:"discuss"}).catch(function(e){
     alert("Firebase error: "+e.message);
-    if(btn){btn.textContent='START DISCUSSION 💬';btn.disabled=false;}
   });
 }
 
@@ -5475,7 +5469,7 @@ function hostSkipToNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
   var locList=round.c==="Location"?_genLocList(round.n):null;
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
@@ -5904,7 +5898,7 @@ function hostNextRound(){
   var spinnerSeed=Math.floor(Math.random()*100000);
 
   ONLINE.roomRef.update({
-    phase:"spinner",
+    phase:"playing",
     spinnerSeed:spinnerSeed,
     players:players,
     roundNum:nextRound,
