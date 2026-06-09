@@ -4857,7 +4857,6 @@ function hostStartGame(){
   if(names.length<3){alert("Need at least 3 players! Found: "+names.length);return;}
   var cfg=data.cfg;
   if(!cfg){alert("ERROR: No cfg in Firebase data");return;}
-  alert("Starting game...\nPlayers: "+names.length+"\nCats: "+JSON.stringify(cfg.cats)+"\nLangs: "+JSON.stringify(cfg.langs));
 
   // pick round using shared helper
   var used=data.usedRounds||[];
