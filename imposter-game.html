@@ -6089,10 +6089,23 @@ loadSavedNames();
 
 // ── PWA — SERVICE WORKER + INSTALL BANNER ─────────────────
 (function(){
-  // Register external service worker (sw.js must be in same folder on GitHub)
+  // Force clear old service worker caches and re-register fresh
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js', {scope:'./'})
-      .catch(function(){/* silent fail if sw.js not found */});
+    // Unregister ALL old service workers first
+    navigator.serviceWorker.getRegistrations().then(function(registrations){
+      registrations.forEach(function(reg){ reg.unregister(); });
+    });
+    // Clear ALL caches
+    if('caches' in window){
+      caches.keys().then(function(names){
+        names.forEach(function(name){ caches.delete(name); });
+      });
+    }
+    // Re-register fresh
+    setTimeout(function(){
+      navigator.serviceWorker.register('./sw.js', {scope:'./'})
+        .catch(function(){});
+    }, 1000);
   }
 
   // Install Banner — Android Chrome fires this automatically
