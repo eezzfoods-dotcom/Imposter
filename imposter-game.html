@@ -5155,28 +5155,18 @@ function showMyRole(data){
   html+="<span style='font-family:Bebas Neue,cursive;font-size:1.2rem;color:"+firstColor+";letter-spacing:.05em'>"+h(firstName)+"</span>";
   if(isFirst) html+="<span style='font-size:.75rem;background:#E91E63;color:#fff;padding:2px 8px;border-radius:20px;font-weight:700'>YOU!</span>";
   html+="</div></div>";
-  if(!ONLINE.isHost){
-    html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
-    html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
-  } else {
-    html+="<div style='margin-top:20px;padding:0 0 40px'>";
-    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>START DISCUSSION 💬</button>";
-    html+="</div>";
+  html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
+  html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+  if(ONLINE.isHost){
+    html+="<button class='sb' style='margin-top:20px' id='startDiscBtn'>START DISCUSSION 💬</button>";
   }
   html+="</div></div></div>";
   render(html);
-
-  // Attach click handler after render — works on all mobile browsers
   if(ONLINE.isHost){
     var discBtn=document.getElementById('startDiscBtn');
     if(discBtn){
-      discBtn.addEventListener('touchend',function(e){
-        e.preventDefault();
-        hostMoveDiscuss();
-      });
-      discBtn.addEventListener('click',function(){
-        hostMoveDiscuss();
-      });
+      discBtn.addEventListener('touchend',function(e){e.preventDefault();hostMoveDiscuss();});
+      discBtn.addEventListener('click',function(){hostMoveDiscuss();});
     }
   }
 }
@@ -5232,9 +5222,9 @@ function drawOnlineSpinner(data){
   html+="<p class='spin-result-lbl'>SPEAKS FIRST THIS ROUND</p>";
   html+="<p class='spin-result-name' id='spinWinnerName' style='color:"+firstColorSpin+"'>"+h(firstName)+"</p>";
   if(isHost){
-    html+="<button class='spin-btn' onclick='hostMoveToRoles()'>REVEAL ROLES 🎬</button>";
+    html+="<button class='spin-btn' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
   } else {
-    html+="<p class='spin-waiting'>Waiting for host to reveal roles…</p>";
+    html+="<p class='spin-waiting'>Waiting for host to start discussion…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
   }
   html+="</div>";
@@ -5270,8 +5260,21 @@ function drawOnlineSpinner(data){
 }
 
 function hostMoveToRoles(){
-  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
+  // Called from spinner — but now spinner comes AFTER cards, so this is unused in new flow
+  // Kept for compatibility
+  if(!ONLINE.roomRef) return;
   ONLINE.roomRef.update({phase:"playing"});
+}
+
+function hostMoveToSpinner(){
+  // Called after all players have seen their cards — show spinner to pick first speaker
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
+  var btn=document.getElementById('startDiscBtn');
+  if(btn){btn.textContent='Loading…';btn.disabled=true;}
+  ONLINE.roomRef.update({phase:"spinner"}).catch(function(e){
+    alert("Error: "+e.message);
+    if(btn){btn.textContent='SPIN WHEEL 🎡';btn.disabled=false;}
+  });
 }
 
 function hostMoveDiscuss(){
