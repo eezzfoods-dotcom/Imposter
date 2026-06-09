@@ -6108,18 +6108,26 @@ loadSavedNames();
 (function(){
   // Register external service worker (sw.js must be in same folder on GitHub)
   // Force clear old service worker caches so updates always load fresh
+  // Aggressive cache-busting: unregister SW, clear ALL caches, then force reload once
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
-      regs.forEach(function(r){r.unregister();});
+      if(regs.length>0){
+        var p=regs.map(function(r){return r.unregister();});
+        Promise.all(p).then(function(){
+          if('caches' in window){
+            caches.keys().then(function(keys){
+              Promise.all(keys.map(function(k){return caches.delete(k);})).then(function(){
+                // Only reload once — check flag in sessionStorage
+                if(!sessionStorage.getItem('sw_cleared')){
+                  sessionStorage.setItem('sw_cleared','1');
+                  window.location.reload(true);
+                }
+              });
+            });
+          }
+        });
+      }
     });
-    if('caches' in window){
-      caches.keys().then(function(keys){
-        keys.forEach(function(k){caches.delete(k);});
-      });
-    }
-    setTimeout(function(){
-      navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(function(){});
-    },1000);
   }
 
   // Install Banner — Android Chrome fires this automatically
