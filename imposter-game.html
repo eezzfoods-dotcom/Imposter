@@ -2510,9 +2510,6 @@ function film(){
 
 // ── RENDER ───────────────────────────────────────────────
 function render(html){
-  // Remove any sticky buttons from previous screen
-  var old=document.getElementById('stickyDiscussBtn');
-  if(old) old.remove();
   removeBackBtn();
   document.getElementById("app").innerHTML=html;
 }
@@ -5161,25 +5158,26 @@ function showMyRole(data){
   if(!ONLINE.isHost){
     html+="<p style='color:rgba(255,255,255,.5);font-size:.78rem;text-align:center;margin-top:16px'>Waiting for host to start discussion…</p>";
     html+="<div class='waiting-anim' style='margin-top:8px'><span></span><span></span><span></span></div>";
+  } else {
+    html+="<div style='margin-top:20px;padding:0 0 40px'>";
+    html+="<button id='startDiscBtn' style='width:100%;padding:18px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.3rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);display:block'>START DISCUSSION 💬</button>";
+    html+="</div>";
   }
   html+="</div></div></div>";
   render(html);
 
-  // Add sticky START DISCUSSION button directly to body — outside scroll container
+  // Attach click handler after render — works on all mobile browsers
   if(ONLINE.isHost){
-    var old2=document.getElementById('stickyDiscussBtn');
-    if(old2) old2.remove();
-    var stickyBtn=document.createElement('div');
-    stickyBtn.id='stickyDiscussBtn';
-    stickyBtn.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,#0a0519 80%,transparent);z-index:99999;box-sizing:border-box';
-    var btn=document.createElement('button');
-    btn.textContent='START DISCUSSION 💬';
-    btn.style.cssText='width:100%;padding:16px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.2rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5);-webkit-tap-highlight-color:transparent';
-    btn.addEventListener('click', function(){
-      hostMoveDiscuss();
-    });
-    stickyBtn.appendChild(btn);
-    document.body.appendChild(stickyBtn);
+    var discBtn=document.getElementById('startDiscBtn');
+    if(discBtn){
+      discBtn.addEventListener('touchend',function(e){
+        e.preventDefault();
+        hostMoveDiscuss();
+      });
+      discBtn.addEventListener('click',function(){
+        hostMoveDiscuss();
+      });
+    }
   }
 }
 var _spinnerRan=false;
@@ -5277,12 +5275,14 @@ function hostMoveToRoles(){
 }
 
 function hostMoveDiscuss(){
-  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
-  console.log("hostMoveDiscuss called, roomRef:", ONLINE.roomRef.toString());
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart.");return;}
+  var btn=document.getElementById('startDiscBtn');
+  if(btn){btn.textContent='Starting…';btn.disabled=true;}
   ONLINE.roomRef.update({phase:"discuss"}).then(function(){
-    console.log("phase:discuss written successfully");
+    console.log("discuss phase set");
   }).catch(function(e){
-    alert("Error starting discussion: "+e.message);
+    alert("Firebase error: "+e.message);
+    if(btn){btn.textContent='START DISCUSSION 💬';btn.disabled=false;}
   });
 }
 
