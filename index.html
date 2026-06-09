@@ -2509,7 +2509,13 @@ function film(){
 }
 
 // ── RENDER ───────────────────────────────────────────────
-function render(html){removeBackBtn();document.getElementById("app").innerHTML=html;}
+function render(html){
+  // Remove any sticky buttons from previous screen
+  var old=document.getElementById('stickyDiscussBtn');
+  if(old) old.remove();
+  removeBackBtn();
+  document.getElementById("app").innerHTML=html;
+}
 
 // ── SETUP SCREEN ─────────────────────────────────────────
 function loadSavedNames(){
@@ -4651,16 +4657,10 @@ function handleRoomUpdate(data){
   // Reset NR trigger on every phase transition
   if(phase!=="discuss") _nrTriggered=false;
 
-  // Spinner: never re-render if already spinning this seed (handled inside drawOnlineSpinner)
-  // Playing: never re-render role card once shown (it's a static read — no need to refresh)
-  if(phase==="playing" && _lastPhase==="playing" && roundNum===_lastRoundNum){
-    return; // role card already showing — don't wipe it
-  }
-
   // Discuss: re-render only when NR votes change or discuss round changes
   if(phase==="discuss" && _lastPhase==="discuss" && roundNum===_lastRoundNum && discussRound===_lastDiscussRound){
     var voteCount=Object.keys(data.nextRoundVotes||{}).length;
-    if(voteCount===_lastVoteCount) return; // nothing changed that affects the UI
+    if(voteCount===_lastVoteCount) return;
     _lastVoteCount=voteCount;
   } else if(phase==="discuss"){
     _lastVoteCount=Object.keys(data.nextRoundVotes||{}).length;
@@ -4675,6 +4675,15 @@ function handleRoomUpdate(data){
     _lastVoteCount=Object.keys(data.votes||{}).length;
   }
 
+  // Guess: re-render only when guess count changes
+  if(phase==="guess" && _lastPhase==="guess"){
+    var gCount=Object.keys((data.result&&data.result.guesses)||{}).length;
+    if(gCount===_lastVoteCount) return;
+    _lastVoteCount=gCount;
+  } else if(phase==="guess"){
+    _lastVoteCount=Object.keys((data.result&&data.result.guesses)||{}).length;
+  }
+
   _lastPhase=phase;
   _lastRoundNum=roundNum;
   _lastDiscussRound=discussRound;
@@ -4685,17 +4694,13 @@ function handleRoomUpdate(data){
   } else if(phase==="spinner"){
     drawOnlineSpinner(data);
   } else if(phase==="playing"){
-    showMyRole(data);
+    showMyRole(data); // always re-render — sticky button re-appended each time
   } else if(phase==="discuss"){
     checkOnlineNRMajority(data);
     drawOnlineDiscuss(data);
   } else if(phase==="vote"){
     drawOnlineVote(data);
   } else if(phase==="guess"){
-    // Re-render when guess count changes (someone submitted)
-    var gCount=Object.keys((data.result&&data.result.guesses)||{}).length;
-    if(_lastPhase==="guess"&&_lastVoteCount===gCount) return;
-    _lastVoteCount=gCount;
     drawOnlineGuess(data);
   } else if(phase==="result"){
     drawOnlineResult(data);
@@ -5067,12 +5072,6 @@ function showMyRole(data){
   var isFood=round.c==="Food";
 
   var html="<div class='page dark' style='align-items:flex-start;overflow-y:auto;padding-bottom:0'>";
-  // Sticky START DISCUSSION button at bottom for host — always visible regardless of content length
-  if(ONLINE.isHost){
-    html+="<div style='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,rgba(10,5,25,.95) 60%,transparent);z-index:9999'>";
-    html+="<button class='sb' style='width:100%;margin:0' onclick='hostMoveDiscuss()'>START DISCUSSION 💬</button>";
-    html+="</div>";
-  }
   html+="<div class='ccol' style='padding-bottom:"+(ONLINE.isHost?"90px":"20px")+";width:100%'><div class='fi' style='width:100%'>";
   html+="<div class='bav' style='border:3px solid "+c+";background:rgba(156,39,176,.12);width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.6rem;margin:0 auto 14px'>"+a+"</div>";
   html+="<p style='font-family:Bebas Neue,cursive;font-size:2rem;color:"+c+";letter-spacing:.06em;text-align:center;margin-bottom:20px'>"+h(myName)+"</p>";
@@ -5159,9 +5158,17 @@ function showMyRole(data){
   }
   html+="</div></div></div>";
   render(html);
-}
 
-// ── ONLINE SPINNER (synced across all devices) ──────────
+  // Add sticky START DISCUSSION button directly to body — outside scroll container
+  // position:fixed only works reliably when not inside overflow:auto parent
+  if(ONLINE.isHost){
+    var stickyBtn=document.createElement('div');
+    stickyBtn.id='stickyDiscussBtn';
+    stickyBtn.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(to top,#0a0519 60%,transparent);z-index:99999;box-sizing:border-box';
+    stickyBtn.innerHTML='<button style="width:100%;padding:16px;background:linear-gradient(135deg,#E91E63,#9C27B0);border:none;border-radius:14px;color:#fff;font-family:Bebas Neue,cursive;font-size:1.2rem;letter-spacing:.1em;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,.5)" onclick="hostMoveDiscuss()">START DISCUSSION 💬</button>';
+    document.body.appendChild(stickyBtn);
+  }
+}
 var _spinnerRan=false;
 var _spinnerPhase=null; // track which game phase the spinner is for
 
@@ -5252,12 +5259,15 @@ function drawOnlineSpinner(data){
 }
 
 function hostMoveToRoles(){
-  // spinner → playing (role reveal). showMyRole will show START DISCUSSION button.
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
   ONLINE.roomRef.update({phase:"playing"});
 }
 
 function hostMoveDiscuss(){
-  ONLINE.roomRef.update({phase:"discuss"});
+  if(!ONLINE.roomRef){alert("Connection lost. Please restart the game.");return;}
+  ONLINE.roomRef.update({phase:"discuss"}).catch(function(e){
+    alert("Error starting discussion: "+e.message);
+  });
 }
 
 // ── ONLINE DISCUSS ───────────────────────────────────────
